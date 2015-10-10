@@ -36,6 +36,7 @@ def main():
         options.undraw()
 
         optionsMenu = Text(Point((winMenu.getWidth() / 2), 10), "Options")
+        optionsMenu.setSize(15)
         screenSmall = Text(Point((winMenu.getWidth() / 2), 100), "Small")
         screenMedium = Text(Point((winMenu.getWidth() / 2), 200), "Medium")
         screenLarge = Text(Point((winMenu.getWidth() / 2), 300), "Large")
@@ -51,22 +52,27 @@ def main():
         point2 = winMenu.getMouse()
         point2x = point2.getX()
         point2y = point2.getY()
-
         
 
-        if((point2y > 90)and(point2y < 100)):
-            width = 800
-            height = 600
+        while((point2y <= 90)and(point2y >= 100)):
 
-        elif((point2y > 190)and(point2y < 210)):
-            width = 1024
-            height = 768
+            if((point2y > 90)and(point2y < 100)):
+                width = 800
+                height = 600
 
-        elif((point2y > 290)and(point2y < 310)):
-            width = 1920
-            height = 1080
+            elif((point2y > 190)and(point2y < 210)):
+                width = 1024
+                height = 768
 
-        elif((point2y > 440)and(point2y < 460)):
+            elif((point2y > 290)and(point2y < 310)):
+                width = 1920
+                height = 1080
+
+            point2 = winMenu.getMouse()
+            point2x = point2.getX()
+            point2y = point2.getY()
+
+        if((point2y > 440)and(point2y < 460)):
             optionsMenu.undraw()
             screenSmall.undraw()
             screenMedium.undraw()
