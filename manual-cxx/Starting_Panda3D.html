@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Starting Panda3D - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Starting Panda3D</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="A_Panda3D_Hello_World_Tutorial.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Loading_the_Grassy_Scenery.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p><span class="suppress-screenshots"></span>
+</p><p>
+
+</p>
+<h2> <span class="mw-headline" id="Creating_a_New_Panda3D_Application_2"> Creating a New Panda3D Application </span></h2>
+<p>To start Panda3D, create a text file and save it with a .cxx extension. Any text editor will work. Enter the following text into your C++ file:</p>
+<pre class="cpp"><span style="color: #339900;">#include &quot;pandaFramework.h&quot;</span><br /><span style="color: #339900;">#include &quot;pandaSystem.h&quot;</span><br />&#160;<br /><span style="color: #0000ff;">int</span> main<span style="color: #008000;">&#40;</span><span style="color: #0000ff;">int</span> argc, <span style="color: #0000ff;">char</span> <span style="color: #000040;">*</span>argv<span style="color: #008000;">&#91;</span><span style="color: #008000;">&#93;</span><span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span><br />    <span style="color: #666666;">//open a new window framework</span><br />  PandaFramework framework<span style="color: #008080;">;</span><br />  framework.<span style="color: #000000;">open_framework</span><span style="color: #008000;">&#40;</span>argc, argv<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #666666;">//set the window title to My Panda3D Window</span><br />  framework.<span style="color: #000000;">set_window_title</span><span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;My Panda3D Window&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #666666;">//open the window</span><br />  WindowFramework <span style="color: #000040;">*</span>window <span style="color: #000080;">=</span> framework.<span style="color: #000000;">open_window</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br />  <span style="color: #666666;">//here is room for your own code</span><br />&#160;<br />    <span style="color: #666666;">//do the main loop, equal to run() in python</span><br />  framework.<span style="color: #000000;">main_loop</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #666666;">//close the window framework</span><br />  framework.<span style="color: #000000;">close_framework</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />  <span style="color: #0000ff;">return</span> <span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #008000;">&#125;</span></pre>
+<p>For information about the Window Framework to open a window, click <a href="The_Window_Framework.html" title="The Window Framework">here</a>.</p>
+<p><code>pandaFramework.h</code> and <code>pandaSystem.h</code> load most of the Panda3D modules. The <i>main_loop()</i> subroutine contains the Panda3D main loop. It renders a frame, handles the background tasks, and then repeats.  It does not normally return, so it needs to be called only once and must be the last line in your script. In this particular example, there will be nothing to render, so you should expect a window containing an empty grey area.</p>
+<h2> <span class="mw-headline" id="Running_the_Program_2"> Running the Program </span></h2>
+<p>The steps required to build and run your program were already explained on <a href="Getting_Started_with_your_Development_Environment.html" title="Getting Started with your Development Environment">Getting Started with your Development Environment</a>.</p>
+<p>If Panda3D has been installed properly, a gray window titled <i>My Panda3D Window</i> will appear when you run your program. There is nothing we can do with this window, but that will change shortly.</p>
+<p>
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 123/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:935-0!*!0!!en!*!* and timestamp 20130413135144 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="A_Panda3D_Hello_World_Tutorial.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Loading_the_Grassy_Scenery.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

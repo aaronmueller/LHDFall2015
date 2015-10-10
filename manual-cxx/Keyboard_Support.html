@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Keyboard Support - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Keyboard Support</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Hardware_support.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Mouse_Support.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p>Panda3D has keyboard support built in. Keyboard presses send <a href="Event_Handling.html" title="Event Handling" class="mw-redirect">Events</a>.  Each keyboard key will send an event when it is first pressed down, when it is released, and one repeatedly while its pressed.
+</p><p>The events can be accepted with the following code:
+</p>
+<pre class="codeblock">
+self.accept( &lt;event name&gt; , &lt;Function&gt; )
+self.accept( &lt;event name&gt; , &lt;Function&gt; , &lt;parameters list&gt; )
+self.acceptOnce( &lt;event name&gt; , &lt;Function&gt; )
+self.acceptOnce( &lt;event name&gt; , &lt;Function&gt; , &lt;parameters list&gt; )
+</pre>
+<p>&lt;event name&gt; is a string that labels the event.
+&lt;Function&gt; is a python function to be called when the event is sent.
+&lt;parameters list&gt; is a python list of parameters to use to call &lt;Function&gt;. 
+</p><p>The &lt;event name&gt; that a key sends is fairly predictable base on these rules:
+</p><p>You can see these results for yourself using <code>messenger.toggleVerbose()</code>
+</p><p>1. Keys that type a character are named that character. It is always lowercase even with shift or caps lock (Shift and other modifiers are explained below.)
+</p><p>e.g.
+</p>
+<pre class="codeblock">
+ &quot;a&quot;, &quot;b&quot;, &quot;3&quot;, &quot;[&quot;, etc.
+</pre>
+<p>not 
+</p>
+<pre class="codeblock">
+ &quot;A&quot;, &quot;B&quot;, &quot;#&quot;, &quot;{&quot;
+</pre> 
+<p>2. The key down event is named for the key.
+</p><p>3. As of 1.3.0 The keyboard autorepeat is named for the key + "-repeat" e.g.
+</p>
+<pre class="codeblock">
+ &quot;a-repeat&quot;, &quot;2-repeat&quot;, &quot;[-repeat&quot;
+</pre>
+<p>4. The key up event is named for the key + "-up" e.g.
+</p>
+<pre class="codeblock">
+ &quot;a-up&quot;, &quot;2-up&quot;, &quot;[-up&quot;
+</pre>
+<p>5. All key events (including "-up") have a corresponding time event labeled
+</p>
+<pre class="codeblock">  
+&quot;time-&quot; + &lt;key name&gt;
+</pre>
+<p>Here is an example of time reading in code:
+</p>
+<pre class="python"><span style="color: #ff7700;font-weight:bold;">class</span> ReadKeys<span style="color: black;">&#40;</span>DirectObject.<span style="color: black;">DirectObject</span><span style="color: black;">&#41;</span>:<br />  <span style="color: #ff7700;font-weight:bold;">def</span> <span style="color: #0000cd;">__init__</span><span style="color: black;">&#40;</span><span style="color: #008000;">self</span><span style="color: black;">&#41;</span>:<br />    <span style="color: #008000;">self</span>.<span style="color: black;">accept</span><span style="color: black;">&#40;</span><span style="color: #483d8b;">'time-a-repeat'</span>, <span style="color: #008000;">self</span>.<span style="color: black;">printRepeat</span><span style="color: black;">&#41;</span><br />&#160;<br />  <span style="color: #ff7700;font-weight:bold;">def</span> printRepeat<span style="color: black;">&#40;</span><span style="color: #008000;">self</span>,a<span style="color: black;">&#41;</span>:<br />        <span style="color: #ff7700;font-weight:bold;">print</span> <span style="color: #483d8b;">&quot;repeat a&quot;</span>,a</pre>
+<p>that send a time argument corresponding to the time that event was fired
+</p><p>6. Keys that don't type a character are labeled as follows:
+</p>
+<pre class="codeblock">
+&quot;escape&quot;, &quot;f&quot;+&quot;1-12&quot; (e.g. &quot;f1&quot;,&quot;f2&quot;,...&quot;f12&quot;), &quot;print_screen&quot; &quot;scroll_lock&quot;
+&quot;backspace&quot;, &quot;insert&quot;, &quot;home&quot;, &quot;page_up&quot;, &quot;num_lock&quot;
+&quot;tab&quot;,  &quot;delete&quot;, &quot;end&quot;, &quot;page_down&quot;
+&quot;caps_lock&quot;, &quot;enter&quot;, &quot;arrow_left&quot;, &quot;arrow_up&quot;, &quot;arrow_down&quot;, &quot;arrow_right&quot;
+&quot;shift&quot;, &quot;lshift&quot;, &quot;rshift&quot;,
+&quot;control&quot;, &quot;alt&quot;, &quot;lcontrol&quot;, &quot;lalt&quot;, &quot;space&quot;, &quot;ralt&quot;, &quot;rcontrol&quot;
+</pre>
+<p>Note that "print_screen" is not available on Windows, (and some other OS'es) because it is used by the system. If you want to be able to catch this key, you need to find some way to prevent the system from catching the key first. (however, "print_screen-up" is still available in most cases)
+</p><p>7. Some physical keys are distinguishable from the events that they fire, and some are not. The modifier keys distinguish between left and right, but send a neutral event as well. (e.g. the left shift key sends both "lshift" and "shift" events when pressed) Save for "num_lock", "*", and "+" the numpad keys are indistinguishable from the main keyboard counterparts. (e.g. when Num Lock is on the both the numpad and keyboard 1 keys send "1")
+</p><p>8. Keys pressed in combination with modifiers send an additional event. The name is the modifier appended before the key and separated with a dash in the order shift control alt e.g.:
+</p>
+<pre class="codeblock">  
+&quot;shift-a&quot; &quot;shift-control-alt-a&quot; &quot;shift-alt-a&quot;
+</pre>
+<p>These compound events don't send a "time-" event. If you need one, use the "time-" event sent by one of the keys in the combination.
+</p><p>The modifier compound events can be turned off to allow regular events to occur by calling:
+</p>
+
+<pre class="cpp">PT<span style="color: #008000;">&#40;</span>MouseWatcher<span style="color: #008000;">&#41;</span> mouseWatcher<span style="color: #008080;">;</span><br />mouseWatcher <span style="color: #000080;">=</span> <span style="color: #008000;">&#40;</span>MouseWatcher<span style="color: #000040;">*</span><span style="color: #008000;">&#41;</span>window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_mouse<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span>.<span style="color: #000000;">node</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #0000ff;">if</span> <span style="color: #008000;">&#40;</span>mouseWatcher<span style="color: #008000;">&#41;</span><br />  mouseWatcher<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_modifier_buttons <span style="color: #008000;">&#40;</span>ModifierButtons<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br />ButtonThrower <span style="color: #000040;">*</span>bt <span style="color: #000080;">=</span> DCAST<span style="color: #008000;">&#40;</span>ButtonThrower, window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_mouse<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span>.<span style="color: #000000;">get_child</span><span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span>.<span style="color: #000000;">node</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #0000ff;">if</span> <span style="color: #008000;">&#40;</span>bt<span style="color: #008000;">&#41;</span><br />  bt<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_modifier_buttons<span style="color: #008000;">&#40;</span>ModifierButtons<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p>Here are some examples in code:
+</p>
+<pre class="python"><span style="color: #008000;">self</span>.<span style="color: black;">accept</span><span style="color: black;">&#40;</span><span style="color: #483d8b;">'k'</span>, <span style="color: #008000;">self</span>.__spam <span style="color: black;">&#41;</span> <span style="color: #808080; font-style: italic;"># calls the function __spam() on the k key event.</span><br /><span style="color: #008000;">self</span>.<span style="color: black;">accept</span><span style="color: black;">&#40;</span><span style="color: #483d8b;">'k-up'</span>, <span style="color: #008000;">self</span>.__spam, <span style="color: black;">&#91;</span>eggs, sausage, bacon,<span style="color: black;">&#93;</span> <span style="color: black;">&#41;</span> <span style="color: #808080; font-style: italic;"># calls __spam(eggs,sausage,bacon)</span><br /><span style="color: #008000;">self</span>.<span style="color: black;">accept</span><span style="color: black;">&#40;</span><span style="color: #483d8b;">'escape'</span>, <span style="color: #dc143c;">sys</span>.<span style="color: black;">exit</span> <span style="color: black;">&#41;</span> <span style="color: #808080; font-style: italic;"># exit on esc</span><br /><span style="color: #008000;">self</span>.<span style="color: black;">accept</span><span style="color: black;">&#40;</span><span style="color: #483d8b;">'arrow_up'</span>, <span style="color: #008000;">self</span>.<span style="color: black;">spamAndEggs</span> <span style="color: black;">&#41;</span> <span style="color: #808080; font-style: italic;"># call spamAndEggs when up is pressed</span><br /><span style="color: #008000;">self</span>.<span style="color: black;">accept</span><span style="color: black;">&#40;</span><span style="color: #483d8b;">'arrow_up-repeat'</span>, <span style="color: #008000;">self</span>.<span style="color: black;">spamAndEggs</span> <span style="color: black;">&#41;</span> <span style="color: #808080; font-style: italic;"># and at autorepeat if held</span><br /><span style="color: #008000;">self</span>.<span style="color: black;">accept</span><span style="color: black;">&#40;</span><span style="color: #483d8b;">'arrow_up-up'</span>, <span style="color: #008000;">self</span>.<span style="color: black;">spamAndEggs</span> <span style="color: black;">&#41;</span> <span style="color: #808080; font-style: italic;"># calls when the up arrow key is released</span></pre>
+<p>Please, note then when the Panda window is minimized or Panda3D loses focus somehow else, "-up" event is sent for all keys. Read this forum thread to learn more: <a rel="nofollow" class="external free" href="http://www.panda3d.org/phpbb2/viewtopic.php?t=4630">http://panda3d.net/phpbb2/viewtopic.php?t=4630</a>
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 40/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:987-0!*!0!*!*!*!* and timestamp 20130413213547 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Hardware_support.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Mouse_Support.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

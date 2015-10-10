@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Loading Actors and Animations - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Loading Actors and Animations</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Loading_Models.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Actor_Animations.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="Loading_Actors_and_Animations.html#Actor_Basics"><span class="tocnumber">1</span> <span class="toctext">Actor Basics</span></a></li>
+<li class="toclevel-1"><a href="Loading_Actors_and_Animations.html#Using_Actors"><span class="tocnumber">2</span> <span class="toctext">Using Actors</span></a>
+<ul>
+<li class="toclevel-2"><a href="Loading_Actors_and_Animations.html#Required_Includes"><span class="tocnumber">2.1</span> <span class="toctext">Required Includes</span></a></li>
+<li class="toclevel-2"><a href="Loading_Actors_and_Animations.html#Load_the_Actor_Model"><span class="tocnumber">2.2</span> <span class="toctext">Load the Actor Model</span></a></li>
+<li class="toclevel-2"><a href="Loading_Actors_and_Animations.html#Load_the_Animation"><span class="tocnumber">2.3</span> <span class="toctext">Load the Animation</span></a></li>
+<li class="toclevel-2"><a href="Loading_Actors_and_Animations.html#Bind_the_Model_and_the_Animation"><span class="tocnumber">2.4</span> <span class="toctext">Bind the Model and the Animation</span></a></li>
+<li class="toclevel-2"><a href="Loading_Actors_and_Animations.html#Control_the_Animations"><span class="tocnumber">2.5</span> <span class="toctext">Control the Animations</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="Loading_Actors_and_Animations.html#Panda_Filename_Syntax"><span class="tocnumber">3</span> <span class="toctext">Panda Filename Syntax</span></a></li>
+</ul>
+</td></tr></table>
+<h2> <span class="mw-headline" id="Actor_Basics">Actor Basics</span></h2>
+<p>
+</p><p>
+The <code>Actor</code> class which is available to python users is not available to C++ users. If you need such a class you have to create your own  class which at least should do the following:
+</p>
+<ul><li>load the Actor Model</li>
+<li>load the animations</li>
+<li>bind the model and the animations using AnimControl or AnimControlCollection</li></ul>
+<h5> <span class="mw-headline" id="Required_Includes">Required Includes</span></h5>
+<pre class="cpp"><span style="color: #339900;">#include &quot;auto_bind.h&quot;</span><br /><span style="color: #339900;">#include &quot;AnimControlCollection.h&quot;</span></pre>
+<h5> <span class="mw-headline" id="Load_the_Actor_Model">Load the Actor Model</span></h5><pre class="cpp">NodePath Actor <span style="color: #000080;">=</span> window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>load_model<span style="color: #008000;">&#40;</span>windo<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_render<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span>, <span style="color: #FF0000;">&quot;panda-model&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<h5> <span class="mw-headline" id="Load_the_Animation">Load the Animation</span></h5><pre class="cpp">window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>load_model<span style="color: #008000;">&#40;</span>Actor, <span style="color: #FF0000;">&quot;panda-walk&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<h5> <span class="mw-headline" id="Bind_the_Model_and_the_Animation">Bind the Model and the Animation</span></h5><pre class="cpp"><span style="color: #666666;">// don't use PT or CPT with AnimControlCollection</span><br />AnimControlCollection anim_collection<span style="color: #008080;">;</span><br />&#160;<br /><span style="color: #666666;">//bind the animations to the model</span><br />auto_bind<span style="color: #008000;">&#40;</span>Actor.<span style="color: #000000;">node</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span>, anim_collection<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<h5> <span class="mw-headline" id="Control_the_Animations">Control the Animations</span></h5><pre class="cpp"><span style="color: #666666;">// the name of an animation is preceded in the .egg file with &lt;Bundle&gt;:</span><br /><span style="color: #666666;">// loop a specific animation</span><br />anim_collection.<span style="color: #000000;">loop</span><span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;panda_soft&quot;</span>, <span style="color: #0000ff;">true</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br /><span style="color: #666666;">// loop all animations</span><br />anim_collection.<span style="color: #000000;">loop_all</span><span style="color: #008000;">&#40;</span><span style="color: #0000ff;">true</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br /><span style="color: #666666;">// play an animation once:</span><br />anim_collection.<span style="color: #000000;">play</span><span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;panda_soft&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br /><span style="color: #666666;">// pose</span><br />anim_collection.<span style="color: #000000;">pose</span><span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;panda_soft&quot;</span>, <span style="color: #0000dd;">5</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p><br />
+</p>
+to display names of loaded animations you could use:<pre class="cpp"><span style="color: #0000ff;">for</span><span style="color: #008000;">&#40;</span><span style="color: #0000ff;">int</span> n <span style="color: #000080;">=</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span> n <span style="color: #000080;">&lt;</span> anim_controls.<span style="color: #000000;">get_num_anims</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span> <span style="color: #000040;">++</span>n<span style="color: #008000;">&#41;</span><br />    <span style="color: #0000dd;">cout</span> <span style="color: #000080;">&lt;&lt;</span> anim_controls.<span style="color: #000000;">get_anim_name</span><span style="color: #008000;">&#40;</span>n<span style="color: #008000;">&#41;</span> <span style="color: #000080;">&lt;&lt;</span> endl<span style="color: #008080;">;</span></pre>
+<p>If you add more animations to some node after calling: <code>auto_bind(...)</code> they will not be controllable until <code>auto_bind(...)</code> is called again with proper arguments.
+</p><p>Note that it is possible to store the animations and the model in the same file.
+
+</p><p>Although this is a rarely-used technique, it is possible to assemble a
+character model out of several separate pieces (separate models). This is further explained in the section <a href="Multi-Part_Actors.html" title="Multi-Part Actors">Multi-Part Actors</a>.
+</p><p>Panda3D supports both skeletal animation and morph animations.
+</p><p>It is also possible to load animations asynchronously, if your build of Panda has <a href="Threading.html" title="Threading">Threading</a> enabled (which is the case in version 1.6.1 and above).
+</p>
+<h2> <span class="mw-headline" id="Panda_Filename_Syntax">Panda Filename Syntax</span></h2>
+<p>The filenames used in the Actor constructor must follow Panda's filename
+conventions.  See <a href="Loading_Models.html" title="Loading Models">Loading Models</a> for more information.  Loading actors
+and animations utilizes the panda <i>model path</i>, the same as for
+static models.
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 119/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:991-0!*!0!!en!*!* and timestamp 20130413082456 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Loading_Models.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Actor_Animations.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

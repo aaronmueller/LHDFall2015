@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>How to build a CXX Panda3D game using Microsoft Visual Studio 2008 - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: How to build a CXX Panda3D game using Microsoft Visual Studio 2008</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="How_to_compile_a_CXX_Panda3D_program.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="How_to_compile_a_CXX_Panda3D_program_on_Linux.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p>
+
+Note: As of at least Panda version 1.7.2, the pre-built DLL's provided for download from this site are compiled with Microsoft Visual Studio 2008, which is not compatible with other versions of Microsoft Visual Studio.  Therefore, you <em>must</em> also use Visual Studio 2008 to compile your own application; you cannot use Visual Studio 2010 or any other version.
+</p><p>It is possible to compile Panda using 2010, but in order to do this you must download Panda from source and build all of Panda yourself, rather than using the pre-built DLL's available here.  You may also need to recompile some of the thirdparty DLL's, though there are conflicting reports on this.  Many people find it easier just to use Visual Studio 2008.
+</p>
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="How_to_build_a_CXX_Panda3D_game_using_Microsoft_Visual_Studio_2008.html#Steps_to_compile_C.2B.2B_in_Visual_Studio_2008"><span class="tocnumber">1</span> <span class="toctext">Steps to compile C++ in Visual Studio 2008</span></a>
+<ul>
+<li class="toclevel-2"><a href="How_to_build_a_CXX_Panda3D_game_using_Microsoft_Visual_Studio_2008.html#Step_one:_Set_project_mode_.28very_important.21.29"><span class="tocnumber">1.1</span> <span class="toctext">Step one: Set project mode (very important!)</span></a></li>
+<li class="toclevel-2"><a href="How_to_build_a_CXX_Panda3D_game_using_Microsoft_Visual_Studio_2008.html#Step_two:_Add_directories"><span class="tocnumber">1.2</span> <span class="toctext">Step two: Add directories</span></a></li>
+<li class="toclevel-2"><a href="How_to_build_a_CXX_Panda3D_game_using_Microsoft_Visual_Studio_2008.html#Step_three:_Add_libraries"><span class="tocnumber">1.3</span> <span class="toctext">Step three: Add libraries</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></table>
+<h2> <span class="mw-headline" id="Steps_to_compile_C.2B.2B_in_Visual_Studio_2008">Steps to compile C++ in Visual Studio 2008</span></h2>
+<p>Open Visual Studio 2008 and start a new project.
+</p>
+<h3> <span class="mw-headline" id="Step_one:_Set_project_mode_.28very_important.21.29">Step one: Set project mode (very important!)</span></h3>
+<p><em>You must set your new project to "Release" mode.</em>  This is absolutely necessary, because the version of Panda that's provided for download on this website is also built in "Release" mode, and in MSVS, you can't mix-and-match Release and Debug projects, especially if both of them are C++.
+</p><p>If you attempt to build your code in "Debug" mode, everything may appear to build correctly, but when you attempt to run the program, it will crash in mysterious ways.
+</p><p>(In the future, we may provide an optional "Debug" build for download from this site.  In this case, you must be careful to choose "Release" for your project when you are linking against the "Release" Panda build, and "Debug" for your project when you are linking against the "Debug" Panda build.)
+</p><p><strong>Also very important:</strong> you must remove the NDEBUG macro definition from your project file.  MSVS automatically defines this when you set the project to Release mode, but it isn't appropriate to set this unless you really are making the final build of your project before releasing it to users.  Also, in Panda version 1.6.x, <em>leaving this defined will cause mysterious crashes</em> when you run your program.  (This will not be true of Panda version 1.7.x or later, but it is still a good idea to remove it.)
+</p>
+<h3> <span class="mw-headline" id="Step_two:_Add_directories">Step two: Add directories</span></h3>
+<p>You need to add directories corresponding to your installed Panda3D version.  If you installed to C:\Panda3D-1.6.2, for example, then you would add the following directories by using the <code> Tools -> Options... </code> pull-down menu and then selecting <code> Projects and Solutions </code> and in that selecting <code> VC++ Directories </code> and continuing on to enter the following:
+</p>
+<pre class="cpp">Executable Files <br />        C<span style="color: #008080;">:</span>\Panda3D<span style="color: #0000dd;">-1.7</span><span style="color: #0000dd;">.0</span>\bin</pre>
+<pre class="cpp">Include Files  <br />        C<span style="color: #008080;">:</span>\Panda3D<span style="color: #0000dd;">-1.7</span><span style="color: #0000dd;">.0</span>\python\include<br />        C<span style="color: #008080;">:</span>\Panda3D<span style="color: #0000dd;">-1.7</span><span style="color: #0000dd;">.0</span>\include</pre>
+<pre class="cpp">Library Files <br />        C<span style="color: #008080;">:</span>\Panda3D<span style="color: #0000dd;">-1.7</span><span style="color: #0000dd;">.0</span>\python\libs<br />        C<span style="color: #008080;">:</span>\Panda3D<span style="color: #0000dd;">-1.7</span><span style="color: #0000dd;">.0</span>\lib</pre>
+<p><b>Note about VS2010:</b> From Visual Studio 2010 onwards, Microsoft has removed global path settings, so you have to set these paths on a per project basis. In this case, in order to set the Executable path you should add it to the environment. You can do that on the Debugging section of your project properties. Set "merge environment" to yes and set environment to "PATH=C:\Panda3D-1.7.0\bin". Adding include and library paths is straightforward. Even if you don't use VS2010, it's not a bad idea to enter the settings this way since it's cleaner. The correct way of reusing settings across projects is through the use of <a rel="nofollow" class="external text" href="http://msdn.microsoft.com/en-us/library/a4xbdz1e(VS.80).aspx">Property Sheets</a> (External link to MSDN).  But also see the note about VS2010 above: if you are using 2010, you must build all of Panda from source; you cannot use the prebuilt DLL's provided for download.
+</p><p><b>Note about dependencies:</b> Depending on what Panda features you use in C++ you may need to specify some extra paths, for example:
+</p>
+<pre>
+C:\Panda3D-1.7.0\thirdparty\win-libs-vc9\openssl\include
+C:\Panda3D-1.7.0\thirdparty\win-libs-vc9\ode\include
+C:\Panda3D-1.7.0\thirdparty\win-libs-vc9\freetype\include
+</pre>
+<p>You can get a package containing the <i>thirdparty</i> folder separately from the Panda3D website. The same goes for library paths.
+</p>
+<h3> <span class="mw-headline" id="Step_three:_Add_libraries">Step three: Add libraries</span></h3>
+<p>After adding all these directories, right click on project and select properties. In the menu that comes up select the <code> Linker </code> and then the <code> Input </code> tab. In the Additional Dependencies row add the following libraries:
+</p>
+<pre class="cpp">libp3framework.<span style="color: #000000;">lib</span><br />libpanda.<span style="color: #000000;">lib</span><br />libpandafx.<span style="color: #000000;">lib</span><br />libpandaexpress.<span style="color: #000000;">lib</span><br />libp3dtool.<span style="color: #000000;">lib</span><br />libp3dtoolconfig.<span style="color: #000000;">lib</span><br />libp3pystub.<span style="color: #000000;">lib</span><br />libp3direct.<span style="color: #000000;">lib</span></pre>
+<p>You may also need to add more libraries depending on the features you use.
+
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 92/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:2379-0!*!*!!en!*!* and timestamp 20130413172208 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="How_to_compile_a_CXX_Panda3D_program.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="How_to_compile_a_CXX_Panda3D_program_on_Linux.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

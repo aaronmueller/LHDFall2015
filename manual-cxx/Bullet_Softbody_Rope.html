@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Bullet Softbody Rope - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Bullet Softbody Rope</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Bullet_Softbodies.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Bullet_Softbody_Patch.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p>Soft body ropes are best compared to chains of interconnected nodes. This page deals with setup, visualization and attaching things to soft body ropes.
+</p><p><br />
+</p>
+<h2> <span class="mw-headline" id="Setup">Setup</span></h2>
+<p>The following code will create a soft body rope with 8 segment (variable <code>res</code>), and thus 8 + 2 = 10 nodes. <code>p1</code> is the initial position of the first node, and <code>p2</code> is the initial position of the last node. <code>fixeds</code> will be explained later on this page.
+</p>
+
+<pre class="cpp">TODO</pre>
+<p><br />
+</p>
+<h2> <span class="mw-headline" id="Visualisation">Visualisation</span></h2>
+<p>So far we have a physical object, the soft body rope, but aside from the debug renderer this object is not shown in our scene. We need something to visualize the rope.
+</p><p>There are two ways of rendering the rope. First we can make use of a nurbs curse, or we can simple render the rope using geom lines. First we have a look at how to render the rope using geom lines.
+</p>
+
+<pre class="cpp">TODO</pre>
+<p>The class <code>BulletHelper</code> has a convenience method which creates a ready-to-use <code>Geom</code> for us. We only need to wrap the <code>Geom</code> in a <code>GeomNode</code>, and insert it into the scene graph. Since we want the visualisation of the rope to be at the same place as the rope we insert the <code>GeomNode</code> as a child of the <code>BulletSoftBodyNode</code>.
+</p><p>There is just one thing missing. The <code>GeomNode</code> doesn't know that it is the visualization of a soft body rope. When advancing the simulation time the soft body rope will deform, but the visualization will always stay the way it has been created. To fix this we can tell the soft body node that this particular <code>Geom</code> is it's visualization. The soft body node will now update the <code>Geom</code> each frame. This is done in the last line, by linking the geom to the soft body node.
+</p><p>The result doesn't look very good. It's just a thin line. But instead of the above code we can use a nurbs curve for visualization.
+</p>
+
+<pre class="cpp">TODO</pre>
+<p>First we create a nurbs curve (<code>NurbsCurveEvaluator</code>), and then we link this nurbs curve to the soft body rope node. The soft body node will update the nurbs curve every frame from now on.
+</p><p>But we are not done yet. We still need to create something that can be seen in the scene graph. A <code>RopeNode</code> can render a <code>NurbsCurveEvaluator</code>. For details on how to configure the <code>RopeNode</code> please refer to the Panda3D API documentation; both the <code>RopeNode</code> and the <code>NurbsCurveEvaluator</code> are not part of the panda3d.bullet, but core Panda3D classes.
+</p><p><br />
+</p>
+<h2> <span class="mw-headline" id="Attaching_the_rope">Attaching the rope</span></h2>
+<p>Now we have created a rope, and we can render it. Next we want to attach the rope to something, that is "glue" it either to some other object, usually a rigid body, or to a specific position of the world.
+</p><p>At the beginning of this page we promised to deal with the <code>fixeds</code> parameter later on the page. This is the place. Using the <code>fixeds</code> parameter we can attach the rope to a position in the world (global coordinates!). Depending on the value of this parameter we can attach different nodes/vertices of the rope:
+</p>
+<ul>
+<li>0: No node/vertex is attached.</li>
+<li>1: Only the first node/vertex is attached.</li>
+<li>2: Only the last node/vertex is attached.</li>
+<li>3: Both the first and the last node/vertex are attached.</li>
+</ul>
+<p>Or we want to attach the soft body rope to a rigid body. In the following code snippet the last node/vertex of a soft body rope is attached to a rigid body.
+</p>
+
+<pre class="cpp">TODO</pre>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 248/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:2615-0!*!*!!*!*!* and timestamp 20130413213550 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Bullet_Softbodies.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Bullet_Softbody_Patch.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Particle Effects - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Particle Effects</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Panda3D_Utility_Functions.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Using_the_Particle_Panel.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p>
+
+</p>
+<p>Fire,&#160; smoke, glowing, explosion, water fountain, falling leaves, fur, hair 
+and many other fuzzy effects are created procedurally using particle systems. 
+It&#39;s important not to make the assumption that particles must have the size of a 
+&#39;particle&#39; that is very small, particles can have any size and any mass. 
+Particles are physical entities which inherit PhysicsObject.</p>
+<p>Panda3D provides a tool which simplifies testing particle systems. The tool 
+is called (Particle Panel) and is written in python. The link to run the 
+particle panel is in the same folder as the particle sample which comes with 
+Panda3D.</p>
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="Particle_Effects.html#A_particle_system_in_Panda3D_consists_of_6_components:"><span class="tocnumber">1</span> <span class="toctext">A particle system in Panda3D consists of 6 components:</span></a></li>
+<li class="toclevel-1"><a href="Particle_Effects.html#Factory:"><span class="tocnumber">2</span> <span class="toctext">Factory:</span></a></li>
+<li class="toclevel-1"><a href="Particle_Effects.html#Emitter:"><span class="tocnumber">3</span> <span class="toctext">Emitter:</span></a>
+<ul>
+<li class="toclevel-2"><a href="Particle_Effects.html#Available_Emitters:"><span class="tocnumber">3.1</span> <span class="toctext">Available Emitters:</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="Particle_Effects.html#Renderer:"><span class="tocnumber">4</span> <span class="toctext">Renderer:</span></a>
+<ul>
+<li class="toclevel-2"><a href="Particle_Effects.html#Available_renderers:"><span class="tocnumber">4.1</span> <span class="toctext">Available renderers:</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="Particle_Effects.html#ParticleSystem:"><span class="tocnumber">5</span> <span class="toctext">ParticleSystem:</span></a></li>
+<li class="toclevel-1"><a href="Particle_Effects.html#ParticleSystemManager:"><span class="tocnumber">6</span> <span class="toctext">ParticleSystemManager:</span></a></li>
+</ul>
+</td></tr></table>
+<h3> <span class="mw-headline" id="A_particle_system_in_Panda3D_consists_of_6_components:">A particle system in Panda3D consists of 6 components:</span></h3>
+<ol>
+	<li>Factory</li>
+	<li>Emitter</li>
+	<li>Physics engine</li>
+	<li>Renderer</li>
+	<li>Particle System Controller (Particle System)</li>
+	<li>Particle System Manager (Optional)</li>
+</ol>
+<h3> <span class="mw-headline" id="Factory:">Factory:</span></h3>
+<p>Particles are generated in this stage using the provided parameters. Panda3D 
+Provides 2 Factories: </p>
+<ul>
+	<li>PointParticleFactory: Generates particles with default rotation.</li>
+	<li>ZspintParticleFactory:&#160; [From Source Code] Generates particles which spin 
+along their z-axis. this is kind of an intermediary class- if you&#39;re using a 
+SpriteParticleRenderer and you want your sprites to spin without having them be 
+full-blown oriented (i.e. angry quat math), use this. Note:&#160; &#39;set_final_angle&#39; 
+and &#39;angular_velocity&#39; are mutually exclusive APIs &#160;if angular-velocity is 
+specified, final_angle is ignored.</li>
+</ul>
+<p>[Sample]</p>
+<p><pre class="cpp">PT<span style="color: #008000;">&#40;</span>PointParticleFactory<span style="color: #008000;">&#41;</span> pt_particle_factory <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> PointParticleFactory<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_factory<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_lifespan_base<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0.5</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_factory<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_lifespan_spread<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_factory<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_mass_base<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">1.0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_factory<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_mass_spread<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_factory<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_terminal_velocity_base<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">400</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_factory<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_terminal_velocity_spread<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre></p>
+<h3> <span class="mw-headline" id="Emitter:">Emitter:</span></h3>
+<p>The emitter is used to emit the particles generated by the factory. The shape 
+of the emitter determins the initial position and motion direction of the 
+particles.</p>
+<h4> <span class="mw-headline" id="Available_Emitters:">Available Emitters:</span></h4>
+<ul>
+	<li>ArcEmitter</li>
+	<li>&#160;BoxEmitter</li>
+	<li>&#160;DiscEmitter</li>
+	<li>&#160;LineEmitter</li>
+	<li>&#160;RectangleEmitter</li>
+	<li>&#160;RingEmitter</li>
+	<li>&#160;SphereSurfaceEmitter</li>
+	<li>&#160;SphereVolumeEmitter</li>
+	<li>&#160;TangentRingEmitter</li>
+</ul>
+<p>Each emitter is declared in a separate .h file with the same name as the 
+emitter. For example: ArcEmitter is declared in arcEmitter.h</p>
+<p>[Sample]</p>
+<p><pre class="cpp">PT<span style="color: #008000;">&#40;</span>SphereVolumeEmitter<span style="color: #008000;">&#41;</span> sphere_emitter <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> SphereVolumeEmitter<span style="color: #008080;">;</span><br />sphere_emitter<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_emission_type<span style="color: #008000;">&#40;</span>SphereVolumeEmitter<span style="color: #008080;">::</span><span style="color: #000000;">ET_RADIATE</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />sphere_emitter<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_radius<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">3.0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #666666;">// negative values emit the particles toward the sphere center</span><br />sphere_emitter<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_amplitude<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">1</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />sphere_emitter<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_amplitude_spread<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />sphere_emitter<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_offset_force<span style="color: #008000;">&#40;</span>LVector3f<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span>, <span style="color: #0000dd;">0</span>, <span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />sphere_emitter<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_explicit_launch_vector<span style="color: #008000;">&#40;</span>LVector3f<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">1</span>, <span style="color: #0000dd;">0</span>, <span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />sphere_emitter<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_radiate_origin<span style="color: #008000;">&#40;</span>LPoint3f<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span>, <span style="color: #0000dd;">0</span>, <span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre></p>
+<h3> <span class="mw-headline" id="Renderer:">Renderer:</span></h3>
+<p>The renderer is used to specify how the particle appears on screen.</p>
+<h4> <span class="mw-headline" id="Available_renderers:">Available renderers:</span></h4>
+<ul>
+	<li>GeomParticleRenderer: displays each particle on the shape of a selected 
+	PandaNode</li>
+	<li>LineParticleRenderer: displays each particle as a line</li>
+	<li>PointParticleRenderer: displays each particle as a point</li>
+	<li>SparkleParticleRenderer displayes each particle as a plus (+)</li>
+	<li>SpriteParticleRenderer: &#160;displays each particle as a sprite</li>
+</ul>
+<p>Each renderer is declared in a separate .h file with the same name as the 
+renderer. For example: GeomParticleRenderer is declared in 
+geomParticleRenderer.h</p>
+<p>[Sample]</p>
+<p><pre class="cpp">PT<span style="color: #008000;">&#40;</span>PointParticleRenderer<span style="color: #008000;">&#41;</span> pt_particle_rend <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> PointParticleRenderer<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_rend<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_alpha_mode<span style="color: #008000;">&#40;</span>BaseParticleRenderer<span style="color: #008080;">::</span><span style="color: #000000;">PR_ALPHA_OUT</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_rend<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_user_alpha<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">1</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_rend<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_point_size<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">2.0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_rend<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_start_color<span style="color: #008000;">&#40;</span>Colorf<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">1</span>, <span style="color: #0000dd;">0</span>, <span style="color: #0000dd;">0</span>, <span style="color: #0000dd;">1</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span> <span style="color: #666666;">// alpha value is ignored</span><br />pt_particle_rend<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_end_color<span style="color: #008000;">&#40;</span>Colorf<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">1</span>, <span style="color: #0000dd;">1</span>, <span style="color: #0000dd;">0</span>, <span style="color: #0000dd;">1</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_rend<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_blend_type<span style="color: #008000;">&#40;</span>PointParticleRenderer<span style="color: #008080;">::</span><span style="color: #000000;">PointParticleBlendType</span><span style="color: #008080;">::</span><span style="color: #000000;">PP_BLEND_LIFE</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pt_particle_rend<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_blend_method<span style="color: #008000;">&#40;</span>BaseParticleRenderer<span style="color: #008080;">::</span><span style="color: #000000;">ParticleRendererBlendMethod</span><span style="color: #008080;">::</span><span style="color: #000000;">PP_BLEND_LINEAR</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #666666;">//pt_particle_rend-&gt;set_color_blend_mode(ColorBlendAttrib::Mode::M_inv_subtract);</span><br /><span style="color: #666666;">//pt_particle_rend-&gt;set_ignore_scale(false);</span></pre></p>
+<h3> <span class="mw-headline" id="ParticleSystem:">ParticleSystem:</span></h3>
+<p>This class is the controller of the particle system. &#160;The main parameters 
+are:</p>
+<ul>
+	<li>Pool Size: the maximum number of particles the factory can generate
+	Birth Rate: number of seconds between particle births, also it is the time 
+	after which the first birth occurs. So if the value is 6 the first litter 
+	will be born after 6 seconds.</li>
+	<li>Litter Size: number of particles created at each birth. If you want all 
+	the particles to be born at the same time, set this value to the value of 
+	(Pool Size)
+	Litter Spread: this adds a random value in the range [-spread, +spread] to 
+	the value of Litter Size.</li>
+	<li>Lifespan: &#160;number of seconds the system will live.</li>
+	<li>System Grows Older: this flag must be set for the Lifespan value to be 
+	used. It&#39;s very important to remember that particle systems which reach the 
+	end of their lifespan are automatically removed from the 
+	ParticleSystemManager and if you want to reuse them, they should be added to 
+	the ParticleSystemManager again.</li>
+</ul>
+<p>[Sample]</p>
+<p><pre class="cpp">PT<span style="color: #008000;">&#40;</span>ParticleSystem<span style="color: #008000;">&#41;</span> particle_sys <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> ParticleSystem<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_pool_size<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">100</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_birth_rate<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0.1</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_litter_size<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">10</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_litter_spread<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_local_velocity_flag<span style="color: #008000;">&#40;</span><span style="color: #0000ff;">true</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #666666;">//particle_sys-&gt;set_spawn_on_death_flag(true); // this caused an exception!!</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_system_grows_older_flag<span style="color: #008000;">&#40;</span><span style="color: #0000ff;">true</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_system_lifespan<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">3.0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_active_system_flag<span style="color: #008000;">&#40;</span><span style="color: #0000ff;">true</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #666666;">// use it to advance system age, or start at some age</span><br /><span style="color: #666666;">//particle_sys-&gt;set_system_age(5.0);</span><br /><span style="color: #666666;">// system_age is updated only when set_system_grows_older_flag(true);</span><br /><span style="color: #666666;">// get_system_age() returns 0 unless system_grows_older_flag is set</span></pre></p>
+<p>The particle factory, emitter and renderer should be attached to the 
+ParticleSystem and most important the render node should be set.</p>
+<p><pre class="cpp">particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_factory<span style="color: #008000;">&#40;</span>pt_particle_factory<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_renderer<span style="color: #008000;">&#40;</span>pt_particle_rend<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_emitter<span style="color: #008000;">&#40;</span>sphere_emitter<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #666666;">// if spawn and render parents should be different</span><br /><span style="color: #666666;">//particle_sys-&gt;set_spawn_render_node_path(window-&gt;get_render());</span><br />particle_sys<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_render_parent<span style="color: #008000;">&#40;</span>window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_render<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre></p>
+<h3> <span class="mw-headline" id="ParticleSystemManager:">ParticleSystemManager:</span></h3>
+<p>This class is responsible for simplifying control of particle systems. 
+Instead of stepping each particle system in the scene they are all added to the 
+ParticleSystemManager and they can be all stepped using a single command or they 
+can be stepped individually. This class is not count referenced so PT() and 
+CPT() should not be used with it.</p>
+<p>To attach a particle system to the manager:<pre class="cpp">particle_sys_mgr.<span style="color: #000000;">attach_particlesystem</span><span style="color: #008000;">&#40;</span>particle_sys<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre></p>
+<p>To step all the particle systems:<pre class="cpp">particle_sys_mgr.<span style="color: #000000;">do_particles</span><span style="color: #008000;">&#40;</span>ClockObject<span style="color: #008080;">::</span><span style="color: #000000;">get_global_clock</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_dt<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre></p>
+<p>To step a specific particle system:<pre class="cpp">particle_sys_mgr.<span style="color: #000000;">do_particles</span><span style="color: #008000;">&#40;</span>ClockObject<span style="color: #008080;">::</span><span style="color: #000000;">get_global_clock</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_dt<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span>, <br />particle_sys<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre></p>
+<p>NOTE: particle systems which reach the end of their lifespan are 
+automatically removed from the ParticleSystemManager and if you want to reuse 
+them, they should be added to the ParticleSystemManager again.</p>
+<p>
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 74/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:1003-0!*!*!!en!*!* and timestamp 20130413213544 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Panda3D_Utility_Functions.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Using_the_Particle_Panel.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

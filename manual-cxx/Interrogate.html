@@ -1,0 +1,110 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Interrogate - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Interrogate</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Enhanced_Mouse_Navigation.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Python_Editors.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="Interrogate.html#Interrogate"><span class="tocnumber">1</span> <span class="toctext">Interrogate</span></a></li>
+<li class="toclevel-1"><a href="Interrogate.html#How_to_use_it"><span class="tocnumber">2</span> <span class="toctext">How to use it</span></a></li>
+<li class="toclevel-1"><a href="Interrogate.html#Calling_Interrogate"><span class="tocnumber">3</span> <span class="toctext">Calling Interrogate</span></a>
+<ul>
+<li class="toclevel-2"><a href="Interrogate.html#Wrapper_functions"><span class="tocnumber">3.1</span> <span class="toctext">Wrapper functions</span></a></li>
+</ul>
+</li>
+<li class="toclevel-1"><a href="Interrogate.html#More_Information"><span class="tocnumber">4</span> <span class="toctext">More Information</span></a></li>
+</ul>
+</td></tr></table>
+<h2> <span class="mw-headline" id="Interrogate">Interrogate</span></h2>
+<p>Interrogate is a program to parse a body of C++ code and build up a table
+of classes, methods, functions, and symbols found, for the purposes of
+calling into the codebase via a non-C++ scripting language like Python (Scheme and Smalltalk were also tried at some point) The design of interrogate is such that it should be able to produce wrappers for any other language without too much trouble. You'll have to be responsible for writing and maintaining the interface layer to produce the wrappers, though. 
+</p><p>In addition to identifying all the classes and their relationships,
+interrogate will generate a wrapper function for each callable function.
+The wrapper functions will be callable directly from the scripting language,
+with no understanding of C++ necessary; these wrapper functions will in turn
+call the actual C++ functions or methods.
+</p><p>Most exportable features of C++ are supported, including templates, default
+parameters, and function overloading.
+</p>
+<h2> <span class="mw-headline" id="How_to_use_it">How to use it</span></h2>
+<p>There are a few steps involved in generating python wrappers using interrogate.
+Steps for Interrogate:
+</p>
+<ul><li> In this example it is assumed you have a header file called test.h and a source file called test.cxx.
+</li><li> Run Interrogate on your .h file which will generate a test_igate.cxx and a test.in file, for example:
+</li></ul>
+<pre class="codeblock">interrogate -oc test_igate.cxx -od test.in -python-native test.h</pre>
+<ul><li> Most likely, you want to specify more flags to the interrogate command, like -string, -fnames, -refcount, or -assert. Consult the interrogate help file for more information about that (run interrogate with -h option)
+</li><li> Now, you will need to call interrogate_module and generate an interrogate_module.cxx file based on your two files from the previous step:
+</li></ul>
+<pre class="codeblock">interrogate_module -oc test_module.cxx -python-native test.in</pre>
+<ul><li> Note that you can also run interrogate with the -do-module option which will automatically make sure interrogate_module gets called too.
+</li><li> Now you can compile all your source files, and, the test_module.cxx and test_igate.cxx files.
+</li><li> When you want to link your C++ files together to form a library, also include the _igate and _module object files. This will make sure it will include the python wrappers.
+</li><li> You can now put it on your python path (or make sure it's in the same directory) and import it directly by the name of your library.
+</li></ul>
+<pre class="python"><span style="color: #ff7700;font-weight:bold;">from</span> libtest <span style="color: #ff7700;font-weight:bold;">import</span> TestClass</pre>
+<ul><li> Note: In python versions 2.5 and higher, you can not directly load .dll files on windows this way. You will either need to rename your dll into a pyd extension (which will load without problems, hopefully) or you need to preload your library using the imp module.
+</li></ul>
+<h2> <span class="mw-headline" id="Calling_Interrogate">Calling Interrogate</span></h2>
+<p>This section will explain how to call interrogate and will briefly address the most important options. For the full documentation, however, refer to the interrogate help file (accessible by calling interrogate with the -h option).
+</p><p>When calling interrogate, you will need to include the -oc and -od options, which specify where the generated code and function tables, respectively, will be written.
+</p><p>The -module and -library options are used to specify the name of your module and library. These options are mainly code-organizational. You can omit both options.
+</p><p>With -D you can ignore or make interrogate interpret symbols differently. For example, if your code uses a non-standard C macro like __inline, you would need to call interrogate with -D__inline. Or, if you would like certain defines to be defined differently, you can use -Ddefvar=value.
+</p><p>Furthermore, there are a few special flags that you most likely want to include. There is the -string option, which treats the C++ char* and STL strings as special cases, and maps them to the scripting language's string equivalent, instead of a wrapper to basic_string&lt;char&gt;. The option -refcount makes the wrappers compatible with Panda3D's smart reference counting system, if your library depends on Panda3D you will want to include it too. The -assert option is just used for Python wrappers and specifies that when the C++ code throws an assert, this will be translated to an AssertionError exception in python.
+</p>
+<h3> <span class="mw-headline" id="Wrapper_functions">Wrapper functions</span></h3>
+<p>There are three/four options that specify how to generate the wrapper functions:
+</p>
+<ul><li> The -c option will generate function wrappers using the C calling convention. Any scripting language that can call a C function should be able to make advantage of the interrogate database.
+</li><li> The -python option will generate function wrappers using the Python calling convention. In this case, the shared library will directly be loadable as python module (after interrogate_module is called), although C++ objects and methods will be converted into an object handle and a list of independent Python functions.
+</li><li> The -python-native option generates true python objects for C++ objects, and translates all C++ methods to true Python methods. This is the option you will most likely want to use.
+</li><li> There is also the -python-obj option, but I think it does the same as -python-native.
+</li></ul>
+<p>You can also specify a combination of any of those. If all are omitted, the default is -c.
+</p><p>Here's a small example:
+</p>
+<pre class="codeblock">interrogate -D__inline -DCPPPARSER -D__cplusplus -S/usr/include/panda3d/parser-inc -S/usr/include/ -I/usr/include/panda3d/
+-oc myModule_igate.cxx -od myModule.in -fnames -string -refcount -assert -python-native
+-module libMyModule -library libMyModule myModule.h
+
+interrogate_module -oc myModule_module.cxx -module libMyModule
+-library libMyModule -python-native myModule.in</pre>
+<h2> <span class="mw-headline" id="More_Information">More Information</span></h2>
+<ul><li> You can run the interrogate commands with the -h option to get a more detailed explanation of the options available.
+</li><li> There is a sample C++ extension in the skel/ directory in the Panda3D source to use as reference and sandbox.
+</li><li> David Rose, from Walt Disney VR Studio, has held a lecture about interrogate. You can watch a video recording of it <a rel="nofollow" class="external text" href="http://video.google.com/videoplay?docid=8716922590223131644&amp;hl=en">here</a>. (Recorded June 4, 2008)
+</li></ul>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 38/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:2237-0!*!*!!en!*!* and timestamp 20130413191735 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Enhanced_Mouse_Navigation.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Python_Editors.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

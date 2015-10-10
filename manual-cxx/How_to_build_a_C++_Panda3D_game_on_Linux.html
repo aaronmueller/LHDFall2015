@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>How to compile a CXX Panda3D program on Linux - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: How to compile a CXX Panda3D program on Linux</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="How_to_build_a_CXX_Panda3D_game_using_Microsoft_Visual_Studio_2008.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="How_to_compile_a_CXX_Panda3D_program_on_Mac_OS_X.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p>
+
+This short guide explains how to build a Panda3D game written in C++ game under Linux.
+</p><p>First of all, download the following files:
+</p>
+<ol><li> <a rel="nofollow" class="external text" href="http://www.python.org/">Python</a>, the development package
+</li><li> The GNU G++ compiler. On most Linux versions, this is already pre-installed.
+</li></ol>
+<p>Now, first of all, we need to create a .o file from our cxx file. We need to link to the Panda3D include files and to the Python include files. Please change the paths in these commands to the appropiate locations.
+</p>
+<pre class="codeblock">
+g++ -c filename.cxx -o filename.o -fPIC -O2 -I{pythoninclude} -I{panda3dinclude}
+</pre>
+<p>To generate an executable, you can use the following command:
+</p>
+<pre class="codeblock">
+g++ filename.o -o filename -fPIC -L{panda3dlibs} -lp3framework -lpanda
+     -lpandafx -lpandaexpress -lp3dtoolconfig -lp3dtool -lp3pystub -lp3direct
+</pre>
+<p><b>Note:</b> In this two commands, you need to change a few paths:
+</p>
+<ul><li> {pythoninclude}: The path to your Python include folder. For version 2.4, this is /usr/include/python2.4 by default.
+</li><li> {panda3dinclude}: Change this to the path to your Panda3D include directory. This would probably look like /usr/include/panda3d/.
+</li><li> {panda3dlibs}: Change this to the path to your Panda3D libraries. Usually this is just /usr/lib/panda3d or sometimes /usr/lib.
+</li></ul>
+<p><br />
+Here is an equivalent SConstruct file, organized for clarity:
+</p>
+<pre class="codeblock">
+pyInc= '/usr/include/python2.4'
+pandaInc= '/usr/include/panda3d'
+pandaLib= '/usr/lib/panda3d'
+
+Program('filename.cpp',
+	CCFLAGS=['-fPIC', '-O2'],
+	CPPPATH=[pyInc, pandaInc],
+	LIBPATH=pandaLib,
+	LIBS=[	'libp3framework',
+		'libpanda',
+		'libpandafx',
+		'libpandaexpress',
+		'libp3dtoolconfig',
+		'libp3dtool',
+		'libp3pystub',
+		'libp3direct'])
+</pre>
+<p>To run your newly created executable, type:
+</p>
+<pre class="codeblock">
+./filename
+</pre>
+<p>If it runs, congratulations! You have successfully compiled your own Panda3D program!
+
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 13/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:2072-0!*!*!*!*!*!* and timestamp 20130413191900 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="How_to_build_a_CXX_Panda3D_game_using_Microsoft_Visual_Studio_2008.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="How_to_compile_a_CXX_Panda3D_program_on_Mac_OS_X.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

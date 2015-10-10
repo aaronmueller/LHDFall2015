@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Known Shader Bugs and Limitations - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Known Shader Bugs and Limitations</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Shaders_and_Coordinate_Spaces.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="The_Shader_Generator.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p><b>Known Bugs in the Shader Subsystem</b>
+</p><p>Here is a list of known bugs, with workarounds:
+</p><p><b>Problem: Register Allocation.</b>
+</p><p><i>Problem:</i> nVidia's Cg compiler tries to assign registers to parameters.  Under a variety of circumstances, the Cg compiler will assign the same register to two parameters, or to a parameter and to a constant in the program.
+</p><p><i>Workaround:</i> We have found that if you manually allocate registers by supplying a semantic string for each parameter, this problem is bypassed.
+</p><p><b>Problem: Bad Target Languages.</b>
+</p><p><i>Problem:</i> nVidia's Cg compiler will choose one of several different "target" languages to translate the Cg program into.  When the Cg compiler tries to translate the program into the VP40/FP40 language, it often produces incorrect output.
+</p><p><i>Workaround:</i> We have discovered that translation into ARBVP1/ARBFP1 seems to work reliably.  Since that language is supported on essentially every video card, it is usually safe to translate into that language.  We have provided a config-variable that you can use to suppress bleeding edge stuff:
+</p>
+<pre class="codeblock">
+basic-shaders-only #t
+</pre>
+<p>This variable is enabled by default.
+</p><p>At some point, when functionality that is currently flaky becomes reliable,
+we may expand the definition of what constitutes 'basic' shaders.
+</p><p><b>Problem: Cg program too complex for driver.</b>
+</p><p><i>Problem:</i> Panda will translate the shader into the ARBVP1/ARBFP1 profile by default, for the reason stated above. If instructions are used that are not supported by these profiles, this error will occur.
+</p><p><i>Workaround:</i> You need to disable the basic-shaders-only flag to allow Panda to translate the shaders into profiles that do support the used instructions:
+</p>
+<pre class="codeblock">
+basic-shaders-only #f
+</pre>
+<p>Note that by doing so you might run into the problem above, and it is not recommended to do so unless you really need it.
+</p><p><b>Problem: Untested/Unfinished DirectX Support.</b>
+</p><p><i>Problem:</i> Shader development is currently being done in OpenGL.  The DirectX support typically lags behind, and is often less fully-tested.
+</p><p><i>Workaround:</i> The default setting for Panda is to use OpenGL, not DirectX.  For now, when using shaders, do not change this setting.
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 7/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:1721-0!*!*!*!*!*!* and timestamp 20130413085759 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Shaders_and_Coordinate_Spaces.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="The_Shader_Generator.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

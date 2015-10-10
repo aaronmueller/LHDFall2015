@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Graphics Buffers and Windows - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Graphics Buffers and Windows</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;</td>
+              <td width="70px" align="center"></td>
+              <td width="70px" align="right">&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><br><small><i>This page is not in the table of contents.</i></small><br><p>We'll now describe in detail what functions are specific to buffers and windows in Panda.
+</p>
+<h2> <span class="mw-headline" id="GraphicsBuffer_and_ParasiteBuffer">GraphicsBuffer and ParasiteBuffer</span></h2>
+<p>Use these if you want to do off-screen rendering. You must pass <code>True</code> when you <a href="The_Graphics_Engine.html" title="The Graphics Engine">create</a> it if you want to get a texture from it. Otherwise, there is no difference in functionality than a <a href="The_GraphicsOutput_class.html" title="The GraphicsOutput class">GraphicsOutput</a>.
+</p><p>The only difference between a <code>GraphicsBuffer</code> and a <code>ParasiteBuffer</code> is that a <code>ParasiteBuffer</code> does not create it own framebuffer space. To create a <code>ParasiteBuffer</code> you call <code>makeParasite()</code> from the graphics engine.
+</p>
+<pre class="python">makeParasite<span style="color: black;">&#40;</span>host, name,sort, xSize, ySize<span style="color: black;">&#41;</span></pre>
+<p>The arguments <code>name</code>, <code>sort</code>, <code>xSize</code>, and <code>ySize</code> mean the same things they mean for <a href="The_Graphics_Engine.html" title="The Graphics Engine">makeWindow and makeBuffer</a>. The new argument <code>host</code> is the <a href="The_GraphicsOutput_class.html" title="The GraphicsOutput class">GraphicsOutput object</a> whose space in memory it will use. Any rendering done to the parasite is done to the same space in memory as its host. The function <a href="The_GraphicsOutput_class.html" title="The GraphicsOutput class">makeTextureBuffer</a> sometimes returns a <code>ParasiteBuffer</code> for space saving reasons. It is also useful for APIs that don't support offscreen rendering.
+</p><p><code>ParasiteBuffer</code> objects are automatically setup for calls to <code>getTexture()</code> since their contents get cleared when <code>host</code> draws itself.
+</p>
+<h2> <span class="mw-headline" id="GraphicsWindows">GraphicsWindows</span></h2>
+<p>Unlike <code>GraphicsBuffer</code> objects <code>GraphicsWindow</code> objects have a lot more functionality than <code>GraphicsOutput</code> objects.
+</p><p>The most basic of these functions is <code>hasKeyboard()</code> and <code>hasPointer()</code> which returns whether or not this window has the focus of keyboard and pointer respectively. Any calls to keyboard or pointer functions when you do not have control of them generates an error. 
+</p><p>You can get the number of input devices for this window by using <code>getNumInputDevices()</code>. In the absence of a joystick, etc. there is usually only one input device, the 'keyboard/mouse' device. If the API you are using supports it, you can move a mouse to a certain place in the window by using <code>movePointer(device, x,y)</code> where <code>device</code> is the name of the device that holds the mouse (most probabaly 'keyboard/mouse') and <code>x</code> and <code>y</code> represent the <a href="Scene_Graph_Manipulations.html" title="Scene Graph Manipulations">screen position</a> where you want to move the pointer. It returns <code>True</code> if it was succesful, and <code>False</code> otherwise.
+</p><p>You can also ask a window if it <code>isFullscreen()</code> and if it <code> isClosed()</code>. It is important to note that a window is not automatically opened after a call to <a href="The_Graphics_Engine.html" title="The Graphics Engine">makeWindow</a> and is not automatically closed after a call to <a href="The_Graphics_Engine.html" title="The Graphics Engine">closeWindow</a>.
+</p><p>In order to get the full set of properties for a given window you use the function <code>getProperties()</code>. This returns a <code>WindowProperties</code> object that holds all the information for the given screen. See the API documentation for the full functionality of the <code>WindowProperties</code> class. 
+</p><p>If you want to change these properties, use <code>getRequestedProperties()</code> and apply the proper <code>WindowProperties</code> functions. 
+</p><p>To run panda3d in full screen, rather than a window, do the following:
+</p>
+<pre class="python">wp = WindowProperties<span style="color: black;">&#40;</span><span style="color: black;">&#41;</span> <br />wp.<span style="color: black;">setFullscreen</span><span style="color: black;">&#40;</span><span style="color: #008000;">True</span><span style="color: black;">&#41;</span> <br />base.<span style="color: black;">win</span>.<span style="color: black;">requestProperties</span><span style="color: black;">&#40;</span>wp<span style="color: black;">&#41;</span></pre>
+<p>Alternatively, you can modify the fullscreen configuration variable before importing <code>direct.directbase.DirectStart</code>:
+</p>
+<pre class="python"><span style="color: #ff7700;font-weight:bold;">from</span> panda3d.<span style="color: black;">core</span> <span style="color: #ff7700;font-weight:bold;">import</span> loadPrcFileData<br />loadPrcFileData<span style="color: black;">&#40;</span><span style="color: #483d8b;">&quot;&quot;</span>, <span style="color: #483d8b;">&quot;&quot;&quot;fullscreen 1<br />win-size 1024 768&quot;&quot;&quot;</span><span style="color: black;">&#41;</span><br />&#160;<br /><span style="color: #ff7700;font-weight:bold;">from</span> direct.<span style="color: black;">showbase</span>.<span style="color: black;">DirectObject</span> <span style="color: #ff7700;font-weight:bold;">import</span> DirectObject   <span style="color: #808080; font-style: italic;"># for event handling </span><br /><span style="color: #ff7700;font-weight:bold;">import</span> direct.<span style="color: black;">directbase</span>.<span style="color: black;">DirectStart</span> <br /><span style="color: #ff7700;font-weight:bold;">import</span> <span style="color: #dc143c;">sys</span> <br />&#160;<br /><span style="color: #ff7700;font-weight:bold;">class</span> World<span style="color: black;">&#40;</span>DirectObject<span style="color: black;">&#41;</span>: <br />   <span style="color: #ff7700;font-weight:bold;">def</span> <span style="color: #0000cd;">__init__</span><span style="color: black;">&#40;</span><span style="color: #008000;">self</span><span style="color: black;">&#41;</span>: <br />      <span style="color: #008000;">self</span>.<span style="color: black;">accept</span><span style="color: black;">&#40;</span><span style="color: #483d8b;">&quot;escape&quot;</span>,<span style="color: #dc143c;">sys</span>.<span style="color: black;">exit</span><span style="color: black;">&#41;</span> <br />&#160;<br />w= World<span style="color: black;">&#40;</span><span style="color: black;">&#41;</span> <br />run<span style="color: black;">&#40;</span><span style="color: black;">&#41;</span></pre>
+<p><br />
+If a requested change is not possible or invalid, you can call <code>getRejectedProperties()</code>. It returns a <code>WindowProperties</code> object that holds all of the properties that could not be changed.
+</p><p>Windows can also send <a href="Event_Handling.html" title="Event Handling" class="mw-redirect">Events</a> when the user changes a property of the window. You can get the name of this event by calling <code>getWindowEvent()</code>. Initially, all windows send the same event when changed. If you want to setup events for a certain window, use <code>setWindowEvent(name)</code> where <code>name</code> is the name of the event you want sent when this window gets changed externally.
+</p><p>For more advanced functionality see <a rel="nofollow" class="external text" href="http://www.panda3d.org/apiref.php?page=GraphicsWindow"><code>GraphicsWindow</code> in the API documentation.</a>
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 398/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:1150-0!*!0!!*!*!* and timestamp 20130413131909 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;</td>
+              <td width="70px" align="center"></td>
+              <td width="70px" align="right">&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

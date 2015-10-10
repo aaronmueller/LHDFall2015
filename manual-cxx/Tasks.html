@@ -1,0 +1,179 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Tasks - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Tasks</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Tasks_and_Event_Handling.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Task_Chains.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p>Tasks are special functions that are called once each frame while your application executes.  They are similar in concept to threads. However, in Panda3D, tasks are not generally separate threads; instead, all tasks are run cooperatively, one at a time, within the main thread.  This design simplifies game programming considerably by removing the requirement to protect critical sections of code from mutual access.  (See Task Chains in the next section if you really want to use threading.)
+</p><p>When you start Panda3D by initializing ShowBase, a handful of tasks are created by default, but you are free to add as many additional tasks as you like.
+</p>
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1"><a href="Tasks.html#The_Task_Function"><span class="tocnumber">1</span> <span class="toctext">The Task Function</span></a></li>
+<li class="toclevel-1"><a href="Tasks.html#Task_Return_Values"><span class="tocnumber">2</span> <span class="toctext">Task Return Values</span></a></li>
+<li class="toclevel-1"><a href="Tasks.html#The_Do-Later_Task.3F"><span class="tocnumber">3</span> <span class="toctext">The Do-Later Task?</span></a></li>
+<li class="toclevel-1"><a href="Tasks.html#The_Do-Later_Task"><span class="tocnumber">4</span> <span class="toctext">The Do-Later Task</span></a></li>
+<li class="toclevel-1"><a href="Tasks.html#The_Task_Object"><span class="tocnumber">5</span> <span class="toctext">The Task Object</span></a></li>
+<li class="toclevel-1"><a href="Tasks.html#The_Task_Manager"><span class="tocnumber">6</span> <span class="toctext">The Task Manager</span></a></li>
+<li class="toclevel-1"><a href="Tasks.html#Task_timing"><span class="tocnumber">7</span> <span class="toctext">Task timing</span></a></li>
+<li class="toclevel-1"><a href="Tasks.html#Examples"><span class="tocnumber">8</span> <span class="toctext">Examples</span></a></li>
+</ul>
+</td></tr></table>
+<h2> <span class="mw-headline" id="The_Task_Function">The Task Function</span></h2>
+<p>A task is defined with a function or class method; this function is the main entry point for the task and will be called once per frame while the task is running.  By default, the function receives one parameter, which is the task object; the task object carries information about the task itself, such as the amount of time that the task has been running.
+</p><p>Your task function should return when it has finished processing for the frame.  Because all tasks are run in the same thread, you must not spend too much time processing any one task function; the entire application will be locked up until the function returns.
+</p><p>The task function may return either <code>AsyncTask::DS_cont</code> to indicate that the task should be called again next frame, or <code>AsyncTask::DS_done</code> to indicate that it should not be called again. 
+</p><p>You can check how long your task has been running by checking <code>task->get_elapsed_time()</code> in your task function. You can also check how many times the task function has been run by using <code>task->get_elapsed_frames()</code>.
+</p><p>The below example imports the Task module and shows a function used as a task.
+</p>
+
+<pre class="cpp"><span style="color: #339900;">#include &quot;asyncTaskManager.h&quot;</span><br />&#160;<br /><span style="color: #666666;">// This task runs for two seconds, then prints done</span><br />AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DoneStatus</span> example_task<span style="color: #008000;">&#40;</span>GenericAsyncTask<span style="color: #000040;">*</span> task, <span style="color: #0000ff;">void</span><span style="color: #000040;">*</span> data<span style="color: #008000;">&#41;</span><span style="color: #008000;">&#123;</span><br />    <span style="color: #0000ff;">if</span> <span style="color: #008000;">&#40;</span>task<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_elapsed_time<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span> <span style="color: #000080;">&lt;</span> <span style="color: #0000dd;">2.0</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#123;</span><br />        <span style="color: #0000ff;">return</span> AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DS_cont</span><span style="color: #008080;">;</span><br />    <span style="color: #008000;">&#125;</span><br />    <span style="color: #0000dd;">cout</span> <span style="color: #000080;">&lt;&lt;</span> <span style="color: #FF0000;">&quot;Done&quot;</span> <span style="color: #000080;">&lt;&lt;</span> endl<span style="color: #008080;">;</span><br />    <span style="color: #0000ff;">return</span> AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DS_done</span><span style="color: #008080;">;</span><br /><span style="color: #008000;">&#125;</span></pre>
+<h2> <span class="mw-headline" id="Task_Return_Values">Task Return Values</span></h2>
+<p>The value returned from a task affects how the task manager handles that task going forward.
+</p>
+<center>
+<table border="1" cellpadding="1" cellspacing="0">
+<tr>
+<th>Variable</th>
+<th style="text-align: left;">Purpose</th>
+</tr>
+<tr>
+<td><code>AsyncTask::DS_done</code>
+</td><td>Specifies that a task is finished and removes it from the task manager.</td>
+</tr>
+<tr>
+<td><code>AsyncTask::DS_cont</code></td>
+<td>Perform the task again next frame.</td>
+</tr>
+<tr>
+<td><code>AsyncTask::DS_again</code></td>
+<td>Perform the task again, using the same delay as initially specified.</td>
+</tr>
+
+</table></center>
+<p>
+</p>
+<h2> <span class="mw-headline" id="The_Do-Later_Task.3F">The Do-Later Task?</span></h2>
+<p>If you have used Panda3D in Python maybe you are familiar with the Python function <code>taskMgr.doMethodLater()</code>, which let's you schedule a task to be started after a certain delay. This isn't needed in C++, because you can set a delay on a task directly with <code>task->set_delay()</code>. An example will be provided below in the task manager section.
+
+
+</p>
+<h2> <span class="mw-headline" id="The_Task_Object">The Task Object</span></h2>
+<p>The <code>task</code> object is passed into all Task Functions. There are several members accessible in the func object, among these are:
+</p>
+<center>
+<table border="1" cellpadding="1" cellspacing="0">
+<tr>
+<th style="width: 40%;">Member</th>
+<th style="text-align: left;">Returns</th>
+</tr>
+<tr>
+<td><code>task->get_elapsed_time()</code></td>
+<td>A float that indicates how long this task function has been running since the first execution of the function. The timer is running even when the task function is not being executed.</td>
+</tr>
+<tr>
+<td><code>task->get_elapsed_frames()</code></td>
+<td>An integer that counts the number of elapsed frames since this function was added. Count may start from 0 or 1.</td>
+</tr>
+<tr>
+<td><code>task->get_task_id()</code></td>
+<td>An integer that gives the unique id assigned to this task by the Task Manager.</td>
+</tr>
+<tr>
+<td><code>task->get_name()</code></td>
+<td>The task name assigned to the task function.</td>
+</tr>
+</table></center>
+<p>To remove the task and stop it from executing, call <code>task->remove()</code>.
+</p>
+<h2> <span class="mw-headline" id="The_Task_Manager">The Task Manager</span></h2>
+<p>All tasks are handled through the Task Manager object. Here we assume that you have obtained a reference to it and stored it in a variable called <code>taskMgr</code>, for example:
+</p>
+<pre class="cpp">PT<span style="color: #008000;">&#40;</span>AsyncTaskManager<span style="color: #008000;">&#41;</span> taskMgr <span style="color: #000080;">=</span> AsyncTaskManager<span style="color: #008080;">::</span><span style="color: #000000;">get_global_ptr</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p> The Task Manager keeps a list of all currently-running tasks. To add a task to the Task Manager, first create a task object by indicating your function and an arbitrary name, and then add it to the task list by calling <code>taskMgr->add()</code> with a pointer to your task.
+</p>
+
+<pre class="cpp">PT<span style="color: #008000;">&#40;</span>GenericAsyncTask<span style="color: #008000;">&#41;</span> task<span style="color: #008080;">;</span><br />task <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> GenericAsyncTask<span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;MyTaskName&quot;</span>, <span style="color: #000040;">&amp;</span>example_task, <span style="color: #008000;">&#40;</span><span style="color: #0000ff;">void</span><span style="color: #000040;">*</span><span style="color: #008000;">&#41;</span> <span style="color: #0000ff;">NULL</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br />taskMgr<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>add<span style="color: #008000;">&#40;</span>task<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p>You can add extra arguments to the call through the third parameter. 
+</p><p>Although normally each task is given a unique name, you may also create multiple different tasks with the same name.  This can be convenient for locating many related task objects at the same time.  Each task remains independent of the others, even if they have the same name; this means that a task function returning <code>AsyncTask::DS_done</code> will not affect any other task functions.
+</p>
+
+<pre class="cpp">PT<span style="color: #008000;">&#40;</span>GenericAsyncTask<span style="color: #008000;">&#41;</span> task2<span style="color: #008080;">;</span><br />task2 <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> GenericAsyncTask<span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;Existing TaskName&quot;</span>, <span style="color: #000040;">&amp;</span>example_task, <span style="color: #008000;">&#40;</span><span style="color: #0000ff;">void</span><span style="color: #000040;">*</span><span style="color: #008000;">&#41;</span> <span style="color: #0000ff;">NULL</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p>
+
+To remove the task and stop it from executing, you can call <code>task->remove()</code>.
+</p>
+<pre class="cpp">task<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span><span style="color: #0000dd;">remove</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p>A useful task method is <code>task->set_delay()</code>; it causes your task to be called after a certain amount of time (in seconds). You can, of course, implement this kind of functionality with an underlayed task that simply does nothing until a certain amount of time has elapsed (as in the above example), but using this method is a much more efficient way to achieve the same thing, especially if you will have many such tasks waiting around. Note that you need to set the delay before you add the task to the Task Manager, otherwise the call won't have an effect.
+</p>
+<pre class="cpp">task<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_delay <span style="color: #008000;">&#40;</span><span style="color: #0000dd;">60</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />taskMgr<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>add<span style="color: #008000;">&#40;</span>task<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p><br />
+Similarly, if you wish to change the delay time of a task, you have to remove the task and re-add it by hand. For instance:
+</p>
+<pre class="cpp">task<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span><span style="color: #0000dd;">remove</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />task<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_delay<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">10</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />taskMgr<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>add<span style="color: #008000;">&#40;</span>task<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p>You can also alter the delay of the task inside the task function, but you will have to return AsyncTask::DS_again afterwards so that it takes effect.
+</p><p>
+</p><p>
+
+You may add a cleanup function to the task with the <code>task->set_upon_death()</code> function. Similar to task functions, this function receives a function pointer as a parameter.  The cleanup function is called whenever the task finishes, for instance by <code>return AsyncTask::DS_done;</code>, or when it is explicitly removed via a <code>task->remove()</code> call.
+</p>
+<pre class="cpp">task<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_upon_death<span style="color: #008000;">&#40;</span><span style="color: #000040;">&amp;</span>cleanupFunc<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p>
+</p><p>To control order in which tasks are executed, you can use sort or priority argument. If you use only sort or only priority, tasks given lesser value will execute sooner.
+</p><p>
+</p><p>If you use both sort and priority arguments, tasks with lower sort value will be executed first. However, if there are several tasks which have same sort value, but different priority value then that tasks are going to be executed in a way that ones with HIGHER priority value will be executed first.
+
+</p><p>To print the list of tasks currently running, simply call <code>taskMgr->write(cout);</code>. Among your own tasks, you may see the following system tasks listed:
+</p>
+<center><table border="1" cellpadding="1" cellspacing="0">
+<tr><td>dataloop</td><td>      Processes the keyboard and mouse inputs</td></tr>
+
+<tr><td>event</td><td>      Processes events generated by C++ code, such as collision events</td></tr>
+<tr><td>igloop</td><td>Draws the scene</td></tr>
+</table></center>
+<p>
+</p>
+<h2> <span class="mw-headline" id="Task_timing"> Task timing </span></h2>
+<p>To see the specific timing information for each task when you print taskMgr, add the following line to your Config.prc file
+</p><p><code>
+task-timer-verbose #t
+</code>
+</p><p>(see <a href="The_Configuration_File.html" title="The Configuration File">The Configuration File</a> for config syntax)
+</p>
+<h2> <span class="mw-headline" id="Examples">Examples</span></h2>
+<p>
+<p>
+<b>set_upon_death()</b>
+</p>
+<pre class="cpp"><span style="color: #0000ff;">int</span> task_accumulator <span style="color: #000080;">=</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span><br />&#160;<br /><span style="color: #0000ff;">void</span> clean_up<span style="color: #008000;">&#40;</span>GenericAsyncTask <span style="color: #000040;">*</span>task, <span style="color: #0000ff;">bool</span> clean_exit, <span style="color: #0000ff;">void</span> <span style="color: #000040;">*</span>user_data<span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span><br />    <span style="color: #0000dd;">cout</span> <span style="color: #000080;">&lt;&lt;</span> <span style="color: #FF0000;">&quot;Task func has accumulated &quot;</span> <span style="color: #000080;">&lt;&lt;</span> task_accumulator <span style="color: #000080;">&lt;&lt;</span> endl<span style="color: #008080;">;</span><br />    <span style="color: #666666;">//Reset the accumulator</span><br />    task_accumulator <span style="color: #000080;">=</span> <span style="color: #0000dd;">0</span><span style="color: #008080;">;</span><br /><span style="color: #008000;">&#125;</span><br />&#160;<br /><span style="color: #666666;">// A task that runs forever</span><br />AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DoneStatus</span> task_func<span style="color: #008000;">&#40;</span>GenericAsyncTask<span style="color: #000040;">*</span> task, <span style="color: #0000ff;">void</span><span style="color: #000040;">*</span> data<span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span><br />    task_accumulator<span style="color: #000040;">++</span><span style="color: #008080;">;</span><br />    <span style="color: #0000ff;">return</span> AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DS_cont</span><span style="color: #008080;">;</span><br /><span style="color: #008000;">&#125;</span><br />&#160;<br />AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DoneStatus</span> task_stop<span style="color: #008000;">&#40;</span>GenericAsyncTask<span style="color: #000040;">*</span> task, <span style="color: #0000ff;">void</span><span style="color: #000040;">*</span> data<span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span><br />    <span style="color: #008000;">&#40;</span><span style="color: #008000;">&#40;</span>GenericAsyncTask<span style="color: #000040;">*</span><span style="color: #008000;">&#41;</span>data<span style="color: #008000;">&#41;</span><span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span><span style="color: #0000dd;">remove</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #0000ff;">return</span> AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DS_done</span><span style="color: #008080;">;</span><br /><span style="color: #008000;">&#125;</span><br />&#160;<br /><span style="color: #666666;">// Note that we skip the initialization and finalization of</span><br /><span style="color: #666666;">// the application for the sake of simplifying the example.</span><br /><span style="color: #0000ff;">int</span> main<span style="color: #008000;">&#40;</span><span style="color: #0000ff;">int</span> argc, <span style="color: #0000ff;">char</span> <span style="color: #000040;">*</span>argv<span style="color: #008000;">&#91;</span><span style="color: #008000;">&#93;</span><span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span><br />&#160;<br />    <span style="color: #ff0000; font-style: italic;">/* Insert here your app initialization code */</span><br />    <span style="color: #ff0000; font-style: italic;">/* ... */</span><br />&#160;<br />    PT<span style="color: #008000;">&#40;</span>GenericAsyncTask<span style="color: #008000;">&#41;</span> task, stopper_task<span style="color: #008080;">;</span><br />    <span style="color: #666666;">//Add the task_func function with an upon_death callback</span><br />    task <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> GenericAsyncTask<span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;Accumulator&quot;</span>, <span style="color: #000040;">&amp;</span>task_func, <span style="color: #008000;">&#40;</span><span style="color: #0000ff;">void</span><span style="color: #000040;">*</span><span style="color: #008000;">&#41;</span> <span style="color: #0000ff;">NULL</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    task<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_upon_death <span style="color: #008000;">&#40;</span><span style="color: #000040;">&amp;</span>clean_up<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    taskMgr<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>add<span style="color: #008000;">&#40;</span>task<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #666666;">//Adds another task to stop the main task 2 seconds later</span><br />    stopper_task <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> GenericAsyncTask<span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;Task stopper&quot;</span>, <span style="color: #000040;">&amp;</span>task_stop, task<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    stopper_task<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_delay<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">2</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    taskMgr<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>add<span style="color: #008000;">&#40;</span>stopper_task<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br />    <span style="color: #ff0000; font-style: italic;">/* Insert here your app finalization code */</span><br />    <span style="color: #ff0000; font-style: italic;">/* ... */</span><br />&#160;<br /><span style="color: #008000;">&#125;</span></pre>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 647/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:1023-0!*!0!!en!*!* and timestamp 20130412234003 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Tasks_and_Event_Handling.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Task_Chains.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

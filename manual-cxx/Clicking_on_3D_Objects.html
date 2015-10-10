@@ -1,0 +1,73 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Clicking on 3D Objects - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Clicking on 3D Objects</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Bitmask_Example.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Garbage_Collection.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p><span class="suppress-screenshots"></span>
+</p>
+<p>The simplest way to click on 3D objects in Panda3D is to use very simplistic collision detection coupled with event processing.</p>
+<p>First, after a <code>CollisonTraverser</code> and a <code>CollisionHandler</code> have been setup, attach a <code>CollisionRay</code> node to the camera. This node will have its <code>set_from_collide_mask()</code> set to <code>GeomNode::get_default_collide_mask()</code> in order to be as general as possible.</p>
+<p>
+
+</p>
+<pre class="cpp">PT<span style="color: #008000;">&#40;</span>MouseWatcher<span style="color: #008000;">&#41;</span> mouseWatcher<span style="color: #008080;">;</span><br />PT<span style="color: #008000;">&#40;</span>CollisionRay<span style="color: #008000;">&#41;</span> pickerRay<span style="color: #008080;">;</span><br />CollisionTraverser myTraverser <span style="color: #000080;">=</span> CollisionTraverser<span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;ctraverser&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />PT<span style="color: #008000;">&#40;</span>CollisionHandlerQueue<span style="color: #008000;">&#41;</span> myHandler<span style="color: #008080;">;</span><br />PT<span style="color: #008000;">&#40;</span>CollisionNode<span style="color: #008000;">&#41;</span> pickerNode<span style="color: #008080;">;</span><br />NodePath pickerNP<span style="color: #008080;">;</span><br />&#160;<br />pickerNode <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> CollisionNode<span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;mouseRay&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pickerNP <span style="color: #000080;">=</span> camera.<span style="color: #000000;">attach_new_node</span> <span style="color: #008000;">&#40;</span>pickerNode<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pickerNode<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_from_collide_mask<span style="color: #008000;">&#40;</span>GeomNode<span style="color: #008080;">::</span><span style="color: #000000;">get_default_collide_mask</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pickerRay <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> CollisionRay<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />pickerNode<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>add_solid<span style="color: #008000;">&#40;</span>pickerRay<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />myHandler <span style="color: #000080;">=</span> <span style="color: #0000dd;">new</span> CollisionHandlerQueue<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />myTraverser.<span style="color: #000000;">add_collider</span><span style="color: #008000;">&#40;</span>pickerNP, myHandler<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p>
+</p>
+<p>For any object that you want to be pickable you should add a flag to it. The easiest way is to use the <code>set_tag()</code> function:</p>
+<p>
+
+</p>
+<pre class="cpp">object1.<span style="color: #000000;">set_tag</span><span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;myObjectTag&quot;</span>, <span style="color: #FF0000;">&quot;1&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />object2.<span style="color: #000000;">set_tag</span><span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;myObjectTag&quot;</span>, <span style="color: #FF0000;">&quot;2&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre>
+<p>
+</p>
+<p>The above example sets the tag <code>'myObjectTag'</code> on two objects in your graph that you want to designate as pickable. We will check for the presence of this tag after we get the response back from the collision system. </p>
+<p>Now assume that the function <code>my_function()</code> is set up to be called for the <code>'mouse1'</code> event. In <code>my_function()</code> is where you call <code>picker_ray.set_from_lens(origin, destX, destY)</code>. This makes the ray's origin <code>origin</code> and the ray's vector the direction from <code>origin</code> to the point (<code>destX</code>, <code>destY</code>).</p>
+<p>
+
+</p>
+<pre class="cpp"><span style="color: #0000ff;">void</span> myFunction<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#123;</span><br />   <span style="color: #0000ff;">if</span> <span style="color: #008000;">&#40;</span><span style="color: #000040;">!</span>mouseWatcher<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>has_mouse<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#123;</span><br />      <span style="color: #666666;">// The mouse is probably outside the screen.</span><br />      <span style="color: #0000ff;">return</span><span style="color: #008080;">;</span><br />   <span style="color: #008000;">&#125;</span><br />   <span style="color: #666666;">// This gives up the screen coordinates of the mouse.</span><br />   LPoint2f mpos <span style="color: #000080;">=</span> mouseWatcher<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_mouse<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br />   <span style="color: #666666;">// This makes the ray's origin the camera and makes the ray point </span><br />   <span style="color: #666666;">// to the screen coordinates of the mouse.</span><br />   pickerRay<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>set_from_lens<span style="color: #008000;">&#40;</span>window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_camera<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span>, mpos.<span style="color: #000000;">get_x</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span>, mpos.<span style="color: #000000;">get_y</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #008000;">&#125;</span></pre>
+<p>
+</p>
+<p>After this, you now call the traverser like any other collision, get the closest object and "pick" it.</p>
+<p><br />
+
+</p>
+<p>The node returned by the collision system may not be the object itself, but might be just a part of the object. In particular, it will be one of the <code>GeomNodes</code> that make up the object. (The <code>GeomNode</code> class contains the visible geometry primitives that are used to define renderable objects in Panda3D.) Since your object might consist of more than one <code>GeomNode</code>, what you probably would prefer to get is the <code>NodePath</code> that represents the parent of all of these <code>GeomNodes</code>; that is, the <code>NodePath</code> that you set the <code>'myObjectTag'</code> tag on above.</p>
+<p>You can use <code>node_path.find_net_tag()</code> to return the parent <code>NodePath</code> that contains a specified tag.</p>
+<p>(There are also other, similar methods on <code>NodePath</code> that can be used to query the tag specified on a parent node, such as <code>get_net_tag()</code> and <code>has_net_tag()</code>. For simplicity, we shall restrict this example to <code>find_net_tag()</code>.)</p>
+<p><br />
+</p>
+
+<p>
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 119/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:1074-0!*!0!*!*!*!* and timestamp 20130413213046 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Bitmask_Example.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Garbage_Collection.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>

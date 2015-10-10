@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+  <head>
+    <title>Controlling the Camera - Panda3D Manual</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link rel="stylesheet" href="style.css" type="text/css"><link rel="shortcut icon" href="favicon.ico">    <meta name="keywords" content="Panda3D, Panda, 3D, Python, graphics, free, game, engine, game rendering engine, simulation, open source, free download, Disney, ETC, Entertainment Technology Center, open-source">
+    <meta name="description" content="Free open source 3D game and simulation engine developed by Disney and maintained by Carnegie Mellon University\'s Entertainment Technology Center">
+    </head>
+    <body>
+<table width=960 cellpadding=0 cellspacing=0 id=main align=center>
+<tr>
+<td id=borderleft></td>
+<td id=maincenter valign=top>
+<tr><td id=pcontent valign=top><h2>Panda3D Manual: Controlling the Camera</h2>
+<div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Loading_the_Grassy_Scenery.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Loading_and_Animating_the_Panda_Model.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div class='wikicontent' id='wikicontentid'><p><span class="suppress-screenshots"></span>
+</p>
+<table id="toc" class="toc"><tr><td><div id="toctitle"><h2>Contents</h2></div>
+<ul>
+<li class="toclevel-1 tocsection-1"><a href="Controlling_the_Camera.html#Default_Camera_Control_System"><span class="tocnumber">1</span> <span class="toctext">Default Camera Control System</span></a></li>
+<li class="toclevel-1 tocsection-2"><a href="Controlling_the_Camera.html#Tasks"><span class="tocnumber">2</span> <span class="toctext">Tasks</span></a>
+<ul>
+<li class="toclevel-2 tocsection-3"><a href="Controlling_the_Camera.html#Update_the_Code"><span class="tocnumber">2.1</span> <span class="toctext">Update the Code</span></a></li>
+<li class="toclevel-2 tocsection-4"><a href="Controlling_the_Camera.html#Run_the_Program"><span class="tocnumber">2.2</span> <span class="toctext">Run the Program</span></a></li>
+</ul>
+</li>
+</ul>
+</td></tr></table>
+<h2> <span class="mw-headline" id="Default_Camera_Control_System"> Default Camera Control System </span></h2>
+<p>By default, Panda3D runs a task that allows you to move the camera using the mouse. To enable it, use the following command: <pre class="cpp">window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>setup_trackball<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span></pre></p>
+<p>The keys to navigate are:</p>
+<table class="wikitable sortable" border="1" cellpadding="5" cellspacing="0">
+<tr>
+<th style="width: 150px;">Key
+</th>
+<th style="width: 300px;">Action
+</th></tr>
+<tr>
+<td> Left Button
+</td>
+<td> Pan left and right.
+</td></tr>
+<tr>
+<td> Right Button
+</td>
+<td> Move forwards and backwards.
+</td></tr>
+<tr>
+<td> Middle Button
+</td>
+<td> Rotate around the origin of the application.
+</td></tr>
+<tr>
+<td> Right and Middle Buttons
+</td>
+<td> Roll the point of view around the view axis.
+</td></tr>
+</table>
+<p>Go ahead and try this camera control system. The problem with it is that it is sometimes awkward. It is not always easy to get the camera pointed in the direction we want.</p>
+<h2> <span class="mw-headline" id="Tasks"> <a href="Tasks.html" title="Tasks">Tasks</a> </span></h2>
+<h3> <span class="mw-headline" id="Update_the_Code"> Update the Code </span></h3>
+<p>Instead, we are going to write a <i>task</i> that controls the camera's position explicitly. A <i>task</i> is nothing but a procedure that gets called every frame.  Update your code as follows:</p>
+
+<pre class="cpp"><span style="color: #339900;">#include &quot;pandaFramework.h&quot;</span><br /><span style="color: #339900;">#include &quot;pandaSystem.h&quot;</span><br />&#160;<br /><span style="color: #339900;">#include &quot;genericAsyncTask.h&quot;</span><br /><span style="color: #339900;">#include &quot;asyncTaskManager.h&quot;</span><br />&#160;<br /><span style="color: #666666;">// The global task manager</span><br />PT<span style="color: #008000;">&#40;</span>AsyncTaskManager<span style="color: #008000;">&#41;</span> taskMgr <span style="color: #000080;">=</span> AsyncTaskManager<span style="color: #008080;">::</span><span style="color: #000000;">get_global_ptr</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span> <br /><span style="color: #666666;">// The global clock</span><br />PT<span style="color: #008000;">&#40;</span>ClockObject<span style="color: #008000;">&#41;</span> globalClock <span style="color: #000080;">=</span> ClockObject<span style="color: #008080;">::</span><span style="color: #000000;">get_global_clock</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #666666;">// Here's what we'll store the camera in.</span><br />NodePath camera<span style="color: #008080;">;</span><br />&#160;<br /><span style="color: #666666;">// This is our task - a global or static function that has to return DoneStatus.</span><br /><span style="color: #666666;">// The task object is passed as argument, plus a void* pointer, containing custom data.</span><br /><span style="color: #666666;">// For more advanced usage, we can subclass AsyncTask and override the do_task method.</span><br />AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DoneStatus</span> spinCameraTask<span style="color: #008000;">&#40;</span>GenericAsyncTask<span style="color: #000040;">*</span> task, <span style="color: #0000ff;">void</span><span style="color: #000040;">*</span> data<span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span><br />  <span style="color: #666666;">// Calculate the new position and orientation (inefficient - change me!)</span><br />  <span style="color: #0000ff;">double</span> <span style="color: #0000dd;">time</span> <span style="color: #000080;">=</span> globalClock<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_real_time<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />  <span style="color: #0000ff;">double</span> angledegrees <span style="color: #000080;">=</span> <span style="color: #0000dd;">time</span> <span style="color: #000040;">*</span> <span style="color: #0000dd;">6.0</span><span style="color: #008080;">;</span><br />  <span style="color: #0000ff;">double</span> angleradians <span style="color: #000080;">=</span> angledegrees <span style="color: #000040;">*</span> <span style="color: #008000;">&#40;</span><span style="color: #0000dd;">3.14</span> <span style="color: #000040;">/</span> <span style="color: #0000dd;">180.0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />  camera.<span style="color: #000000;">set_pos</span><span style="color: #008000;">&#40;</span><span style="color: #0000dd;">20</span><span style="color: #000040;">*</span><span style="color: #0000dd;">sin</span><span style="color: #008000;">&#40;</span>angleradians<span style="color: #008000;">&#41;</span>,<span style="color: #0000dd;">-20.0</span><span style="color: #000040;">*</span><span style="color: #0000dd;">cos</span><span style="color: #008000;">&#40;</span>angleradians<span style="color: #008000;">&#41;</span>,<span style="color: #0000dd;">3</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />  camera.<span style="color: #000000;">set_hpr</span><span style="color: #008000;">&#40;</span>angledegrees, <span style="color: #0000dd;">0</span>, <span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br />  <span style="color: #666666;">// Tell the task manager to continue this task the next frame.</span><br />  <span style="color: #0000ff;">return</span> AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DS_cont</span><span style="color: #008080;">;</span><br /><span style="color: #008000;">&#125;</span><br />&#160;<br /><span style="color: #0000ff;">int</span> main<span style="color: #008000;">&#40;</span><span style="color: #0000ff;">int</span> argc, <span style="color: #0000ff;">char</span> <span style="color: #000040;">*</span>argv<span style="color: #008000;">&#91;</span><span style="color: #008000;">&#93;</span><span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span><br />    <span style="color: #666666;">// Load the window and set its title.</span><br />    PandaFramework framework<span style="color: #008080;">;</span><br />    framework.<span style="color: #000000;">open_framework</span><span style="color: #008000;">&#40;</span>argc, argv<span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    framework.<span style="color: #000000;">set_window_title</span><span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;My Panda3D Window&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    WindowFramework <span style="color: #000040;">*</span>window <span style="color: #000080;">=</span> framework.<span style="color: #000000;">open_window</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #666666;">// Get the camera and store it in a variable.</span><br />    camera <span style="color: #000080;">=</span> window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_camera_group<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br />    <span style="color: #666666;">// Load the environment model.</span><br />    NodePath environ <span style="color: #000080;">=</span> window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>load_model<span style="color: #008000;">&#40;</span>framework.<span style="color: #000000;">get_models</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span>, <span style="color: #FF0000;">&quot;models/environment&quot;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #666666;">// Reparent the model to render.</span><br />    environ.<span style="color: #000000;">reparent_to</span><span style="color: #008000;">&#40;</span>window<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>get_render<span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #666666;">// Apply scale and position transforms to the model.</span><br />    environ.<span style="color: #000000;">set_scale</span><span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0.25</span>, <span style="color: #0000dd;">0.25</span>, <span style="color: #0000dd;">0.25</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    environ.<span style="color: #000000;">set_pos</span><span style="color: #008000;">&#40;</span><span style="color: #0000dd;">-8</span>, <span style="color: #0000dd;">42</span>, <span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br />    <span style="color: #666666;">// Add our task.</span><br />    <span style="color: #666666;">// If we specify custom data instead of NULL, it will be passed as the second argument</span><br />    <span style="color: #666666;">// to the task function.</span><br />    taskMgr<span style="color: #000040;">-</span><span style="color: #000080;">&gt;</span>add<span style="color: #008000;">&#40;</span><span style="color: #0000dd;">new</span> GenericAsyncTask<span style="color: #008000;">&#40;</span><span style="color: #FF0000;">&quot;Spins the camera&quot;</span>, <span style="color: #000040;">&amp;</span>spinCameraTask, <span style="color: #008000;">&#40;</span><span style="color: #0000ff;">void</span><span style="color: #000040;">*</span><span style="color: #008000;">&#41;</span> <span style="color: #0000ff;">NULL</span><span style="color: #008000;">&#41;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />&#160;<br />    <span style="color: #666666;">// Run the engine.</span><br />    framework.<span style="color: #000000;">main_loop</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #666666;">// Shut down the engine when done.</span><br />    framework.<span style="color: #000000;">close_framework</span><span style="color: #008000;">&#40;</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br />    <span style="color: #0000ff;">return</span> <span style="color: #008000;">&#40;</span><span style="color: #0000dd;">0</span><span style="color: #008000;">&#41;</span><span style="color: #008080;">;</span><br /><span style="color: #008000;">&#125;</span></pre>
+<p>The procedure <code>taskMgr->add()</code> tells Panda3D's <i>task manager</i> to call the procedure <code>spinCameraTask()</code> every frame. This is a procedure that we have written to control the camera. As long as the procedure <code>spinCameraTask()</code> returns the constant <code>AsyncTask::DS_cont</code>, the task manager will continue to call it every frame.</p>
+<p>The object passed to <code>taskMgr->add</code> is an <code>AsyncTask</code> object. We can use <code>GenericAsyncTask</code> to wrap a global function or static method around a task. We can also pass an additional <code>void*</code> parameter that we can cast into a pointer of any data type we like, which is passed as argument to the task function. A GenericAsyncTask function must look like the following:</p>
+<pre class="cpp">AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DoneStatus</span> your_task<span style="color: #008000;">&#40;</span>GenericAsyncTask<span style="color: #000040;">*</span> task, <span style="color: #0000ff;">void</span><span style="color: #000040;">*</span> data<span style="color: #008000;">&#41;</span> <span style="color: #008000;">&#123;</span><br />  <span style="color: #666666;">// Do your stuff here.</span><br />&#160;<br />  <span style="color: #666666;">// Tell the task manager to continue this task the next frame.</span><br />  <span style="color: #666666;">// You can also pass DS_done if this task should not be run again.</span><br />  <span style="color: #0000ff;">return</span> AsyncTask<span style="color: #008080;">::</span><span style="color: #000000;">DS_cont</span><span style="color: #008080;">;</span><br /><span style="color: #008000;">&#125;</span></pre>
+<p>For more advanced usage, you can subclass AsyncTask and override the <code>do_task</code> method to make it do what you want.</p>
+<p>In our code, the procedure <code>spinCameraTask()</code> calculates the desired position of the camera based on how much time has elapsed. The camera rotates 6
+degrees every second. The first two lines compute the desired orientation of the camera; first in degrees, and then in radians. The <code>set_pos()</code> call actually sets the position of the camera. (Remember that Y is horizontal and Z is vertical, so the position is changed by animating X and Y while Z is left fixed at 3 units above ground level.) The <code>set_hpr()</code> call actually sets the orientation.</p>
+<h3> <span class="mw-headline" id="Run_the_Program"> Run the Program </span></h3>
+<p>The camera should no longer be underground; and furthermore, it should now be rotating about the clearing:</p>
+<p><a href="File%253ATutorial2.jpg.html" class="image"><img alt="Tutorial2.jpg" src="Tutorial2.jpg" width="400" height="300" /></a>
+</p>
+<!-- 
+NewPP limit report
+Preprocessor node count: 160/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mw_manual:pcache:idhash:937-0!*!0!!en!2!* and timestamp 20130413202112 -->
+</div><div style="width:100%; padding: 1px;" class=subnavigation>
+<table width="640px" cellpadding="0" cellspacing="0" border="0">
+              <tr>
+              <td width="70px" align="left">&nbsp;&nbsp;<a style="text-decoration:none" href="Loading_the_Grassy_Scenery.html"><img border=0 width=16 height=16 src="arrow_left.png" align=absmiddle> <u>Prev</u></a></td>
+              <td width="70px" align="center"><a style="text-decoration:none" href="Main_Page.html"><img border=0 width=16 height=16 src="arrow_up.png" align=absmiddle><u>Top</u></a></td>
+              <td width="70px" align="right"><a style="text-decoration:none" href="Loading_and_Animating_the_Panda_Model.html"><u>Next</u> <img border=0 width=16 height=16 src="arrow_right.png" align=absmiddle></a>&nbsp;&nbsp;</td>
+              </tr></table></div><div id=legal>&copy; Carnegie Mellon University 2010</div></td></tr></table></td><td id=borderright></td></tr></table></td><td id=borderright></td></tr></table></body></html>
