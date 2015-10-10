@@ -10,7 +10,7 @@ def main():
     width = 800
     height = 600
 
-    winMenu = GraphWin("Snakes", 800, 600)
+    winMenu = GraphWin("Menu", 800, 600)
 
     title = Text(Point((winMenu.getWidth() / 2), 10), "Welcome to the Multiplayer Snake Game")
     title.setSize(15)
@@ -32,30 +32,40 @@ def main():
     if((point1y > 100)and(point1y < 120)):
         title.undraw()
         play.undraw()
+        options.undraw()
 
         optionsMenu = Text(Point((winMenu.getWidth() / 2), 10), "Options")
         screenSmall = Text(Point((winMenu.getWidth() / 2), 100), "Small")
         screenMedium = Text(Point((winMenu.getWidth() / 2), 200), "Medium")
         screenLarge = Text(Point((winMenu.getWidth() / 2), 300), "Large")
         back = Text(Point((winMenu.getWidth() / 2), 450), "BACK")
+        optionsMenu.draw(winMenu)
+        screenSmall.draw(winMenu)
+        screenMedium.draw(winMenu)
+        screenLarge.draw(winMenu)
+        back.draw(winMenu)
+        
+        
 
         point2 = winMenu.getMouse()
         point2x = point2.getX()
         point2y = point2.getY()
 
-        if((point1y > 90)and(point1y < 100)):
+        
+
+        if((point2y > 90)and(point2y < 100)):
             width = 800
             height = 600
 
-        elif((point1y > 190)and(point1y < 210)):
+        elif((point2y > 190)and(point2y < 210)):
             width = 1024
             height = 768
 
-        elif((point1y > 290)and(point1y < 310)):
+        elif((point2y > 290)and(point2y < 310)):
             width = 1920
             height = 1080
 
-        elif((point1y > 440)and(point1y < 460)):
+        elif((point2y > 440)and(point2y < 460)):
             optionsMenu.undraw()
             screenSmall.undraw()
             screenMedium.undraw()
