@@ -1,6 +1,6 @@
 class Snake:
     
-    def _init_(self, color):
+    def __init__(self, color):
         self.color = color
         length = 5
     
