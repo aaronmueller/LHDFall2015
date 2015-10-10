@@ -4,13 +4,14 @@
 
 from graphics import *
 
+
 def main():
 
     # size = input("What size screen do you want? (Small, Medium, Large, Full): ")
     width = 800
     height = 600
 
-    winMenu = GraphWin("Menu", 800, 600)
+    winMenu = GraphWin("", 800, 600)
 
     title = Text(Point((winMenu.getWidth() / 2), 10), "Welcome to the Multiplayer Snake Game")
     title.setSize(15)
